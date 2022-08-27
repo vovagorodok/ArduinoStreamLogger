@@ -13,3 +13,7 @@ extern const LoggingLevel loggingLevel;
 std::ostream& debug();
 std::ostream& info();
 std::ostream& error();
+
+#define LOG_DEBUG debug()
+#define LOG_INFO info()
+#define LOG_ERROR error()
