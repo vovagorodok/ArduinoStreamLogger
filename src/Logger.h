@@ -14,7 +14,7 @@ std::ostream& debug();
 std::ostream& info();
 std::ostream& error();
 
-#define SET_LOGGING_LEVEL(level) const LoggingLevel loggingLevel = level
+#define SET_LOGGING_LEVEL(level) const LoggingLevel loggingLevel = level;
 #define LOG_DEBUG debug()
 #define LOG_INFO info()
 #define LOG_ERROR error()

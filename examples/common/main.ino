@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Logger.h>
 
-SET_LOGGING_LEVEL(LoggingLevel::Info);
+SET_LOGGING_LEVEL(LoggingLevel::Info)
 
 void setup() {
   Serial.begin(115200);
