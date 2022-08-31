@@ -28,6 +28,11 @@ std::ostream& info()
     return loggingLevel <= LoggingLevel::Info ? std::cout : nullStream;
 }
 
+std::ostream& warning()
+{
+    return loggingLevel <= LoggingLevel::Warning ? std::cout : nullStream;
+}
+
 std::ostream& error()
 {
     return loggingLevel <= LoggingLevel::Error ? std::cout : nullStream;

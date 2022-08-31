@@ -12,5 +12,6 @@ void loop() {
   delay(1000);
   LOG_DEBUG << "debug" << std::endl;
   LOG_INFO << "info" << std::endl;
+  LOG_WARNING << "warning" << std::endl;
   LOG_ERROR << "error" << std::endl;
 }
