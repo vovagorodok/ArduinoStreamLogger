@@ -18,6 +18,11 @@ const NullStream &operator<<(NullStream &&os, const T &value)
 static auto nullStream = NullStream();
 }
 
+std::ostream& trace()
+{
+    return loggingLevel <= LoggingLevel::Trace ? std::cout : nullStream;
+}
+
 std::ostream& debug()
 {
     return loggingLevel <= LoggingLevel::Debug ? std::cout : nullStream;
