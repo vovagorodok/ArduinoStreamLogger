@@ -1,5 +1,4 @@
 #pragma once
-#include <ostream>
 #include <iostream>
 
 #if defined LOGLEVEL_TRACE
