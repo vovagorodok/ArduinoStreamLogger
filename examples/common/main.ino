@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <Logger.h>
 
-SET_LOGGING_LEVEL(LoggingLevel::Info)
-
 void setup() {
   Serial.begin(115200);
   while (!Serial);
@@ -10,8 +8,8 @@ void setup() {
 
 void loop() {
   delay(1000);
-  LOG_DEBUG << "debug" << std::endl;
-  LOG_INFO << "info" << std::endl;
-  LOG_WARNING << "warning" << std::endl;
-  LOG_ERROR << "error" << std::endl;
+  LOG_DEBUG << "debug";
+  LOG_INFO << "info";
+  LOG_WARNING << "warning";
+  LOG_ERROR << "error";
 }
