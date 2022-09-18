@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 #if defined LOGLEVEL_TRACE
 #define LOGLEVEL LogLevel::trace
@@ -14,7 +13,12 @@
 #elif defined LOGLEVEL_DISABLED
 #define LOGLEVEL LogLevel::disabled
 #elif !defined LOGLEVEL
+#define LOGLEVEL_DISABLED
 #define LOGLEVEL LogLevel::disabled
+#endif
+
+#ifndef LOGLEVEL_DISABLED
+#include <iostream>
 #endif
 
 #define LOG_TRACE   LOG<LogLevel::trace>()
@@ -50,12 +54,16 @@ struct LogEntry {
     LogEntry(const LogEntry&) = delete;
     LogEntry() {}
     ~LogEntry() {
+        #ifndef LOGLEVEL_DISABLED
         std::cout << std::endl;
+        #endif
     }
 
     template <class T>
     LogEntry& operator<<(const T value) {
+        #ifndef LOGLEVEL_DISABLED
         std::cout << value;
+        #endif
         return *this;
     }
 };
@@ -67,7 +75,9 @@ struct LogNoEndlEntry {
 
     template <class T>
     LogNoEndlEntry& operator<<(const T value) {
+        #ifndef LOGLEVEL_DISABLED
         std::cout << value;
+        #endif
         return *this;
     }
 };
