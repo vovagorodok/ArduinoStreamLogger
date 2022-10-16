@@ -52,15 +52,12 @@ enum class NoLogEntry {};
 
 struct LogEntry {
     LogEntry(const LogEntry&) = delete;
-    LogEntry() {}
-    ~LogEntry() {
-        #ifndef LOGLEVEL_DISABLED
-        std::cout << std::endl;
-        #endif
-    }
+    LogEntry();
+    ~LogEntry();
 
     template <class T>
-    LogEntry& operator<<(const T value) {
+    LogEntry& operator<<(const T value)
+    {
         #ifndef LOGLEVEL_DISABLED
         std::cout << value;
         #endif
@@ -70,8 +67,8 @@ struct LogEntry {
 
 struct LogNoEndlEntry {
     LogNoEndlEntry(const LogNoEndlEntry&) = delete;
-    LogNoEndlEntry() {}
-    ~LogNoEndlEntry() {}
+    LogNoEndlEntry();
+    ~LogNoEndlEntry();
 
     template <class T>
     LogNoEndlEntry& operator<<(const T value) {
