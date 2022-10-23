@@ -17,6 +17,7 @@
 #define LOGLEVEL LogLevel::disabled
 #endif
 
+#include <Arduino.h>
 #ifndef LOGLEVEL_DISABLED
 #include <iostream>
 #endif
@@ -56,10 +57,17 @@ struct LogEntry {
     ~LogEntry();
 
     template <class T>
-    LogEntry& operator<<(const T value)
+    inline LogEntry& operator<<(const T& value)
     {
         #ifndef LOGLEVEL_DISABLED
         std::cout << value;
+        #endif
+        return *this;
+    }
+    inline LogEntry& operator<<(const String& value)
+    {
+        #ifndef LOGLEVEL_DISABLED
+        std::cout << value.c_str();
         #endif
         return *this;
     }
@@ -71,9 +79,15 @@ struct LogNoEndlEntry {
     ~LogNoEndlEntry();
 
     template <class T>
-    LogNoEndlEntry& operator<<(const T value) {
+    inline LogNoEndlEntry& operator<<(const T& value) {
         #ifndef LOGLEVEL_DISABLED
         std::cout << value;
+        #endif
+        return *this;
+    }
+    inline LogNoEndlEntry& operator<<(const String& value) {
+        #ifndef LOGLEVEL_DISABLED
+        std::cout << value.c_str();
         #endif
         return *this;
     }
