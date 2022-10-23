@@ -7,7 +7,7 @@ Required c++17 and newer. Add to `platformio.ini`:
 build_flags =
 	-std=c++17
 	-std=gnu++17
-	-D LOGLEVEL_INFO
+	-D LOG_LEVEL_INFO
 build_unflags =
 	-std=gnu++11
 ```
@@ -20,7 +20,7 @@ LOG_ERROR << "error";
 ```
 
 ## Side efects
-In `LOGLEVEL_INFO` case when any function is called like:
+In `LOG_LEVEL_INFO` case when any function is called like:
 ```
 LOG_DEBUG << foo();
 ```

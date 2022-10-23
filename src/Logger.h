@@ -1,24 +1,24 @@
 #pragma once
 
-#if defined LOGLEVEL_TRACE
-#define LOGLEVEL LogLevel::trace
-#elif defined LOGLEVEL_DEBUG
-#define LOGLEVEL LogLevel::debug
-#elif defined LOGLEVEL_INFO
-#define LOGLEVEL LogLevel::info
-#elif defined LOGLEVEL_WARNING
-#define LOGLEVEL LogLevel::warning
-#elif defined LOGLEVEL_ERROR
-#define LOGLEVEL LogLevel::error
-#elif defined LOGLEVEL_DISABLED
-#define LOGLEVEL LogLevel::disabled
-#elif !defined LOGLEVEL
-#define LOGLEVEL_DISABLED
-#define LOGLEVEL LogLevel::disabled
+#if defined LOG_LEVEL_TRACE
+#define LOG_LEVEL LogLevel::trace
+#elif defined LOG_LEVEL_DEBUG
+#define LOG_LEVEL LogLevel::debug
+#elif defined LOG_LEVEL_INFO
+#define LOG_LEVEL LogLevel::info
+#elif defined LOG_LEVEL_WARNING
+#define LOG_LEVEL LogLevel::warning
+#elif defined LOG_LEVEL_ERROR
+#define LOG_LEVEL LogLevel::error
+#elif defined LOG_LEVEL_DISABLED
+#define LOG_LEVEL LogLevel::disabled
+#elif !defined LOG_LEVEL
+#define LOG_LEVEL_DISABLED
+#define LOG_LEVEL LogLevel::disabled
 #endif
 
 #include <Arduino.h>
-#ifndef LOGLEVEL_DISABLED
+#ifndef LOG_LEVEL_DISABLED
 #include <iostream>
 #endif
 
@@ -59,14 +59,14 @@ struct LogEntry {
     template <class T>
     inline LogEntry& operator<<(const T& value)
     {
-        #ifndef LOGLEVEL_DISABLED
+        #ifndef LOG_LEVEL_DISABLED
         std::cout << value;
         #endif
         return *this;
     }
     inline LogEntry& operator<<(const String& value)
     {
-        #ifndef LOGLEVEL_DISABLED
+        #ifndef LOG_LEVEL_DISABLED
         std::cout << value.c_str();
         #endif
         return *this;
@@ -80,13 +80,13 @@ struct LogNoEndlEntry {
 
     template <class T>
     inline LogNoEndlEntry& operator<<(const T& value) {
-        #ifndef LOGLEVEL_DISABLED
+        #ifndef LOG_LEVEL_DISABLED
         std::cout << value;
         #endif
         return *this;
     }
     inline LogNoEndlEntry& operator<<(const String& value) {
-        #ifndef LOGLEVEL_DISABLED
+        #ifndef LOG_LEVEL_DISABLED
         std::cout << value.c_str();
         #endif
         return *this;
@@ -94,7 +94,7 @@ struct LogNoEndlEntry {
 };
 
 constexpr bool isLogged(LogLevel level) {
-    return LOGLEVEL <= level;
+    return LOG_LEVEL <= level;
 }
 
 template <LogLevel level>

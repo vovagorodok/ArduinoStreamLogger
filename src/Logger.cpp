@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-#ifndef LOGLEVEL_DISABLED
+#ifndef LOG_LEVEL_DISABLED
 #if defined(ESP32)
 #define LOGGER_WITH_MUTEX
 
@@ -21,7 +21,7 @@ LogEntry::LogEntry()
 
 LogEntry::~LogEntry()
 {
-    #ifndef LOGLEVEL_DISABLED
+    #ifndef LOG_LEVEL_DISABLED
     std::cout << std::endl;
     #ifdef LOGGER_WITH_MUTEX
     loggerMutex.unlock();
