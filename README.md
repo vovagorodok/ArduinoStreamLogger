@@ -1,6 +1,6 @@
 # Arduino Stream Logger
-Library opens posibility of logging by using ostream.
-When log level is disabled (by adding `-D LOG_LEVEL_DISABLED` or removing `-D LOG_LEVEL_..`) than all strings. operators calls, etc. will be optimalized/removed from binary.
+Library opens posibility of logging by using ostream.\
+When log level is disabled (by adding `-D LOG_LEVEL_DISABLED` or removing `-D LOG_LEVEL_..`) than all strings, operators calls, etc. will be optimalized/removed from binary.
 
 ## Using
 Required c++17 and newer. Add to `platformio.ini`:
@@ -12,7 +12,7 @@ build_flags =
 build_unflags =
 	-std=gnu++11
 ```
-Then:
+Then in code:
 ```
 LOG_DEBUG << "debug";
 LOG_INFO << "info";
@@ -21,12 +21,13 @@ LOG_ERROR << "error";
 ```
 
 ## Side efects
-In `LOG_LEVEL_INFO` case when any function is called like:
+Compiler will not optimalize function calls.\
+For example, in case of `LOG_LEVEL_INFO` and debug with function call:
 ```
 LOG_DEBUG << foo();
 ```
-Compiler will not optimalize it and `foo()` will be called.\
-Following macro will help with that:
+Compiler optimalize only logging, but `foo()` will be called.\
+Following macro will help optimalize all:
 ```
 LOG_CALL_IF_DEBUG(LOG_DEBUG << foo());
 ```
