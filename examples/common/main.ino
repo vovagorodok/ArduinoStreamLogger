@@ -2,8 +2,10 @@
 #include <Logger.h>
 
 void setup() {
+  #ifndef LOG_LEVEL_DISABLED
   Serial.begin(115200);
   while (!Serial);
+  #endif
 }
 
 void loop() {
