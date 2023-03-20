@@ -33,7 +33,6 @@ LOG_CALL_IF_DEBUG(LOG_DEBUG << foo());
 ```
 
 ## Additional format options
-
 ```
 build_flags =
 	-D LOG_FORMAT_WITH_PREFIX
