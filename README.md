@@ -20,7 +20,7 @@ LOG_WARNING << "warning";
 LOG_ERROR << "error";
 ```
 
-## Side efects
+## Optomization aspects
 Compiler will not optimalize function calls.\
 For example, in case of `LOG_LEVEL_INFO` and debug with function call:
 ```
