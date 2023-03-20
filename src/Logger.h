@@ -51,28 +51,6 @@ enum class LogLevel {
 
 enum class NoLogEntry {};
 
-struct LogEntry {
-    LogEntry(const LogEntry&) = delete;
-    LogEntry();
-    ~LogEntry();
-
-    template <class T>
-    inline LogEntry& operator<<(const T& value)
-    {
-        #ifndef LOG_LEVEL_DISABLED
-        std::cout << value;
-        #endif
-        return *this;
-    }
-    inline LogEntry& operator<<(const String& value)
-    {
-        #ifndef LOG_LEVEL_DISABLED
-        std::cout << value.c_str();
-        #endif
-        return *this;
-    }
-};
-
 struct LogNoEndlEntry {
     LogNoEndlEntry(const LogNoEndlEntry&) = delete;
     LogNoEndlEntry();
@@ -91,6 +69,12 @@ struct LogNoEndlEntry {
         #endif
         return *this;
     }
+};
+
+struct LogEntry : LogNoEndlEntry {
+    LogEntry(const LogEntry&) = delete;
+    LogEntry();
+    ~LogEntry();
 };
 
 constexpr bool isLogged(LogLevel level) {

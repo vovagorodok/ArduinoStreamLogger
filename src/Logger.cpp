@@ -12,23 +12,6 @@ static std::mutex loggerMutex{};
 #endif
 #endif
 
-LogEntry::LogEntry()
-{
-    #ifdef LOGGER_WITH_MUTEX
-    loggerMutex.lock();
-    #endif
-}
-
-LogEntry::~LogEntry()
-{
-    #ifndef LOG_LEVEL_DISABLED
-    std::cout << std::endl;
-    #ifdef LOGGER_WITH_MUTEX
-    loggerMutex.unlock();
-    #endif
-    #endif
-}
-
 LogNoEndlEntry::LogNoEndlEntry()
 {
     #ifdef LOGGER_WITH_MUTEX
@@ -40,5 +23,16 @@ LogNoEndlEntry::~LogNoEndlEntry()
 {
     #ifdef LOGGER_WITH_MUTEX
     loggerMutex.unlock();
+    #endif
+}
+
+LogEntry::LogEntry() :
+    LogNoEndlEntry()
+{}
+
+LogEntry::~LogEntry()
+{
+    #ifndef LOG_LEVEL_DISABLED
+    std::cout << std::endl;
     #endif
 }
