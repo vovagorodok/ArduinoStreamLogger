@@ -37,6 +37,8 @@ LogNoEndlEntry::LogNoEndlEntry(LogLevel level)
         case LogLevel::error:
             std::cout << "ERR: ";
             break;
+        default:
+            break;
     }
     #endif
 
