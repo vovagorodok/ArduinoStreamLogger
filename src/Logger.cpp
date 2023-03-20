@@ -1,6 +1,7 @@
 #include "Logger.h"
 
 #ifndef LOG_LEVEL_DISABLED
+
 #if defined(ESP32)
 #define LOGGER_WITH_MUTEX
 
@@ -10,6 +11,11 @@ namespace
 static std::mutex loggerMutex{};
 }
 #endif
+
+#ifndef LOG_FORMAT_SEPARATOR
+#define LOG_FORMAT_SEPARATOR ": "
+#endif
+
 #endif
 
 LogNoEndlEntry::LogNoEndlEntry(LogLevel level)
@@ -23,19 +29,19 @@ LogNoEndlEntry::LogNoEndlEntry(LogLevel level)
     #ifdef LOG_FORMAT_WITH_PREFIX
     switch (level) {
         case LogLevel::trace:
-            std::cout << "TRC: ";
+            std::cout << "TRC" << LOG_FORMAT_SEPARATOR;
             break;
         case LogLevel::debug:
-            std::cout << "DBG: ";
+            std::cout << "DBG" << LOG_FORMAT_SEPARATOR;
             break;
         case LogLevel::info:
-            std::cout << "INF: ";
+            std::cout << "INF" << LOG_FORMAT_SEPARATOR;
             break;
         case LogLevel::warning:
-            std::cout << "WRN: ";
+            std::cout << "WRN" << LOG_FORMAT_SEPARATOR;
             break;
         case LogLevel::error:
-            std::cout << "ERR: ";
+            std::cout << "ERR" << LOG_FORMAT_SEPARATOR;
             break;
         default:
             break;
