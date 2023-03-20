@@ -12,10 +12,34 @@ static std::mutex loggerMutex{};
 #endif
 #endif
 
-LogNoEndlEntry::LogNoEndlEntry()
+LogNoEndlEntry::LogNoEndlEntry(LogLevel level)
 {
+    #ifndef LOG_LEVEL_DISABLED
+
     #ifdef LOGGER_WITH_MUTEX
     loggerMutex.lock();
+    #endif
+
+    #ifdef LOG_FORMAT_WITH_PREFIX
+    switch (level) {
+        case LogLevel::trace:
+            std::cout << "TRC: ";
+            break;
+        case LogLevel::debug:
+            std::cout << "DBG: ";
+            break;
+        case LogLevel::info:
+            std::cout << "INF: ";
+            break;
+        case LogLevel::warning:
+            std::cout << "WRN: ";
+            break;
+        case LogLevel::error:
+            std::cout << "ERR: ";
+            break;
+    }
+    #endif
+
     #endif
 }
 
@@ -26,8 +50,8 @@ LogNoEndlEntry::~LogNoEndlEntry()
     #endif
 }
 
-LogEntry::LogEntry() :
-    LogNoEndlEntry()
+LogEntry::LogEntry(LogLevel level) :
+    LogNoEndlEntry(level)
 {}
 
 LogEntry::~LogEntry()

@@ -53,7 +53,7 @@ enum class NoLogEntry {};
 
 struct LogNoEndlEntry {
     LogNoEndlEntry(const LogNoEndlEntry&) = delete;
-    LogNoEndlEntry();
+    LogNoEndlEntry(LogLevel level);
     ~LogNoEndlEntry();
 
     template <class T>
@@ -73,7 +73,7 @@ struct LogNoEndlEntry {
 
 struct LogEntry : LogNoEndlEntry {
     LogEntry(const LogEntry&) = delete;
-    LogEntry();
+    LogEntry(LogLevel level);
     ~LogEntry();
 };
 
@@ -84,7 +84,7 @@ constexpr bool isLogged(LogLevel level) {
 template <LogLevel level>
 constexpr __attribute__((always_inline)) inline auto LOG() {
     if constexpr (isLogged(level)) {
-        return LogEntry();
+        return LogEntry(level);
     } else {
         return NoLogEntry();
     }
@@ -93,7 +93,7 @@ constexpr __attribute__((always_inline)) inline auto LOG() {
 template <LogLevel level>
 constexpr __attribute__((always_inline)) inline auto LOG_NO_ENDL() {
     if constexpr (isLogged(level)) {
-        return LogNoEndlEntry();
+        return LogNoEndlEntry(level);
     } else {
         return NoLogEntry();
     }
