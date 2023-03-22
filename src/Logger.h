@@ -28,7 +28,7 @@ constexpr bool isLogged(LogLevel level) {
 template <LogLevel level>
 constexpr __attribute__((always_inline)) inline auto LOG() {
     if constexpr (isLogged(level)) {
-        return LogEntry(level);
+        return LogEntryWithEndl<level>();
     } else {
         return NoLogEntry();
     }
@@ -37,7 +37,7 @@ constexpr __attribute__((always_inline)) inline auto LOG() {
 template <LogLevel level>
 constexpr __attribute__((always_inline)) inline auto LOG_NO_ENDL() {
     if constexpr (isLogged(level)) {
-        return LogNoEndlEntry(level);
+        return LogEntry<level>();
     } else {
         return NoLogEntry();
     }

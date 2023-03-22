@@ -10,6 +10,7 @@ void setup() {
 
 void loop() {
   delay(1000);
+  LOG_TRACE << "trace";
   LOG_DEBUG << "debug";
   LOG_INFO << "info";
   LOG_WARNING << "warning";
