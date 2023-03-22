@@ -1,5 +1,4 @@
 #pragma once
-
 #include "LogLevel.h"
 
 #ifndef LOG_LEVEL_DISABLED

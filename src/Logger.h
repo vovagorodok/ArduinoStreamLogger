@@ -1,5 +1,4 @@
 #pragma once
-
 #include "LogLevel.h"
 #include "LogEntry.h"
 
