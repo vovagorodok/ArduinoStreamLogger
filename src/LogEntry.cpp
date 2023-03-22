@@ -1,4 +1,4 @@
-#include "Logger.h"
+#include "LogEntry.h"
 
 #ifndef LOG_LEVEL_DISABLED
 
