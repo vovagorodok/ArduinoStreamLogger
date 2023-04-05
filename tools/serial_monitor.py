@@ -137,6 +137,7 @@ class Navigation(Window):
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
+        self.clear()
 
 
 class Logs(Window):
