@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import textwrap
+import yaml
 import curses
 import serial
 from dataclasses import dataclass
@@ -218,14 +219,21 @@ def main(stdscr):
         Tool for logs monitoring, filtering and collecting.
         """),
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--config", default="config.yaml",
+    parser.add_argument("--config", default="tools/config.yaml",
                         help="Config in yaml format")
     parser.add_argument("--logs_dir", default="logs",
                         help="Dir for logs collecting")
     args = parser.parse_args()
 
     try:
-        ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=.1)
+        config = yaml.safe_load(open(args.config))
+    except FileNotFoundError as e:
+        curses.endwin()
+        print(e)
+        exit()
+
+    try:
+        ser = serial.Serial(config['port'], config['baudrate'])
     except serial.serialutil.SerialException as e:
         curses.endwin()
         print(e)
