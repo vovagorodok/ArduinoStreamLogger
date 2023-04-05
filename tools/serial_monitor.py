@@ -235,7 +235,7 @@ def main(stdscr):
 
     while True:
         ch = stdscr.getch()
-        if ch == curses.KEY_RESIZE:
+        if ch == curses.KEY_RESIZE or ch == curses.KEY_RESUME:
             logs_monitor.refresh()
         if ch == ord('q'):
             ser.close()
