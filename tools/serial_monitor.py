@@ -267,7 +267,7 @@ def main(stdscr):
         exit()
 
     try:
-        ser = serial.Serial(config['port'], config['baudrate'])
+        ser = serial.Serial(config['port'], config['baudrate'], timeout=.01)
     except serial.serialutil.SerialException as e:
         curses.endwin()
         print(e)
