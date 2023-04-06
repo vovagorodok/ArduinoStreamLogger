@@ -50,6 +50,14 @@ class Window():
         self.size = size
 
 
+class Space(Window):
+    def __init__(self, stdscr, size: Size):
+        super().__init__(stdscr, size)
+
+    def refresh(self, pos: Pos, visible: bool):
+        super().refresh(pos, visible)
+
+
 class Frame(Window):
     def __init__(self, stdscr, name: str, borders: bool, window: Window):
         super().__init__(stdscr, Size(window.size.rows + 2, window.size.cols + 2))
@@ -181,6 +189,8 @@ class LogsMonitor():
         self.refresh()
 
     def _create_window(self, config):
+        if 'space' in config:
+            return self._create_space(config['space'])
         if 'frame' in config:
             return self._create_frame(config['frame'])
         if 'row' in config:
@@ -193,6 +203,9 @@ class LogsMonitor():
 
     def _create_windows(self, config):
         return list(map(lambda cfg: self._create_window(cfg), config))
+
+    def _create_space(self, config):
+        return Space(self.stdscr, self._create_size(config))
 
     def _create_frame(self, config):
         return Frame(self.stdscr,
@@ -216,7 +229,7 @@ class LogsMonitor():
         return status
 
     def _create_size(self, config):
-        return Size(config[0], config[1])
+        return Size(config.get('rows', 0), config.get('cols', 0))
 
     def refresh(self):
         rows, cols = self.stdscr.getmaxyx()

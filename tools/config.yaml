@@ -8,19 +8,21 @@ head:
         window:
           status:
             size:
-              - 1
-              - 100
+              rows: 1
+              cols: 100
             prefix: ''
             show_prefix: true
             initial: '<no data>'
+    - space:
+        cols: 1
     - frame:
         name: 'Error:'
         borders: true
         window:
           status:
             size:
-              - 1
-              - 100
+              rows: 1
+              cols: 100
             prefix: 'ERR: '
             show_prefix: false
             initial: '<no data>'
