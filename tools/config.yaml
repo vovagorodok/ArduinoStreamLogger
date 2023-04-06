@@ -3,7 +3,7 @@ baudrate: 115200
 head:
   col:
     - frame:
-        name: 'Status:'
+        name: 'Last:'
         borders: true
         window:
           status:
@@ -18,6 +18,8 @@ head:
     - frame:
         name: 'Error:'
         borders: true
+        colors:
+          foreground: red
         window:
           status:
             size:
@@ -25,4 +27,30 @@ head:
               cols: 100
             prefix: 'ERR: '
             show_prefix: false
+            colors:
+              foreground: red
             initial: '<no data>'
+logs:
+  - prefix: 'DBG: '
+    show_prefix: true
+    show: true
+    colors:
+      foreground: 8
+  - prefix: 'INF: '
+    show_prefix: true
+    show: true
+    colors:
+      foreground: -1
+      background: -1
+  - prefix: 'WRN: '
+    show_prefix: true
+    show: true
+    colors:
+      foreground: red
+  - prefix: 'ERR: '
+    show_prefix: true
+    show: true
+    colors:
+      background: red
+  - prefix: ''
+    show: false
