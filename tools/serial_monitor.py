@@ -111,7 +111,7 @@ class Col(Window):
 
 
 class Status(Window):
-    def __init__(self, stdscr, size: Size, prefix: str, show_prefix: bool, initial: str = ""):
+    def __init__(self, stdscr, size: Size, prefix: str, show_prefix: bool, initial: str):
         super().__init__(stdscr, size)
         self.prefix = prefix
         self.show_prefix = show_prefix
@@ -165,27 +165,58 @@ class Logs(Window):
 
 
 class LogsMonitor():
-    def __init__(self, stdscr):
+    def __init__(self, stdscr, config):
         self.stdscr = stdscr
         self.observers = list()
         self.stdscr.clear()
         self.stdscr.refresh()
 
-        self.head = Col(stdscr,
-                        [Frame(stdscr, "Status:", True,
-                               self._create_status(Size(1, 100), "", True, "<no data>")),
-                         Frame(stdscr, "Error:", True,
-                               self._create_status(Size(1, 100), "ERR: ", False, "<no data>"))])
+        head_config = config.get('head', None)
+        self.head = self._create_window(head_config) if head_config else None
+
         self.logs = Logs(stdscr, Size(0, 0))
         self.nav = Navigation(stdscr, Size(1, 0))
         self.observers.append(self.logs)
 
         self.refresh()
 
-    def _create_status(self, size: Size, prefix: str, show_prefix: bool, initial: str):
-        status = Status(self.stdscr, size, prefix, show_prefix, initial)
+    def _create_window(self, config):
+        if 'frame' in config:
+            return self._create_frame(config['frame'])
+        if 'row' in config:
+            return self._create_row(config['row'])
+        if 'col' in config:
+            return self._create_col(config['col'])
+        if 'status' in config:
+            return self._create_status(config['status'])
+        return None
+
+    def _create_windows(self, config):
+        return list(map(lambda cfg: self._create_window(cfg), config))
+
+    def _create_frame(self, config):
+        return Frame(self.stdscr,
+                     config.get('name', None),
+                     config.get('borders', False),
+                     self._create_window(config['window']))
+
+    def _create_row(self, config):
+        return Row(self.stdscr, self._create_windows(config))
+
+    def _create_col(self, config):
+        return Col(self.stdscr, self._create_windows(config))
+
+    def _create_status(self, config):
+        status = Status(self.stdscr,
+                        self._create_size(config['size']),
+                        config.get('prefix', ""),
+                        config.get('show_prefix', False),
+                        config.get('initial', ""))
         self.observers.append(status)
         return status
+
+    def _create_size(self, config):
+        return Size(config[0], config[1])
 
     def refresh(self):
         rows, cols = self.stdscr.getmaxyx()
@@ -195,12 +226,15 @@ class LogsMonitor():
         self.nav.resize(Size(self.nav.size.rows, max(0, cols - 1)))
         self.nav.refresh(Pos(free_size, 0), True)
 
-        enable_head = cols >= self.head.size.cols and free_size >= self.head.size.rows
-        if enable_head:
-            free_size -= self.head.size.rows
-            self.head.refresh(Pos(0, 0), True)
+        if self.head:
+            enable_head = cols >= self.head.size.cols and free_size >= self.head.size.rows
+            if enable_head:
+                free_size -= self.head.size.rows
+                self.head.refresh(Pos(0, 0), True)
+            else:
+                self.head.refresh(Pos(0, 0), False)
         else:
-            self.head.refresh(Pos(0, 0), False)
+            enable_head = False
 
         logs_pos = self.head.size.rows if enable_head else 0
         self.logs.resize(Size(free_size, cols))
@@ -240,7 +274,7 @@ def main(stdscr):
         exit()
 
     stdscr.nodelay(True)
-    logs_monitor = LogsMonitor(stdscr)
+    logs_monitor = LogsMonitor(stdscr, config)
 
     while True:
         ch = stdscr.getch()
