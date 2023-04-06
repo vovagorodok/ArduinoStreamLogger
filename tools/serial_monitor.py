@@ -284,7 +284,7 @@ class LogsMonitor():
             foreground = PREDEFINED_COLORS[foreground]
         if background in PREDEFINED_COLORS:
             background = PREDEFINED_COLORS[background]
-        
+
         if foreground == -1 and background == -1:
             return 0
 
@@ -361,25 +361,29 @@ def main(stdscr):
     stdscr.nodelay(True)
     logs_monitor = LogsMonitor(stdscr, config)
 
-    while True:
-        ch = stdscr.getch()
-        if ch == curses.KEY_RESIZE or ch == curses.KEY_RESUME:
-            logs_monitor.refresh()
-        if ch == ord('q'):
-            ser.close()
-            exit()
+    try:
+        while True:
+            ch = stdscr.getch()
+            if ch == curses.KEY_RESIZE or ch == curses.KEY_RESUME:
+                logs_monitor.refresh()
+            if ch == ord('q'):
+                ser.close()
+                exit()
 
-        try:
-            log = str(ser.readline().decode().strip('\r\n'))
-        except UnicodeDecodeError:
-            continue
-        except serial.serialutil.SerialException as e:
-            curses.endwin()
-            print(e)
-            exit()
+            try:
+                log = str(ser.readline().decode().strip('\r\n'))
+            except UnicodeDecodeError:
+                continue
+            except serial.serialutil.SerialException as e:
+                curses.endwin()
+                print(e)
+                exit()
 
-        if len(log):
-            logs_monitor.onLog(log)
+            if len(log):
+                logs_monitor.onLog(log)
+
+    except KeyboardInterrupt:
+        exit()
 
 
 curses.wrapper(main)
