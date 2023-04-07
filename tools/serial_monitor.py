@@ -73,11 +73,7 @@ class Window():
 
 
 class Space(Window):
-    def __init__(self, stdscr, size: Size):
-        super().__init__(stdscr, size)
-
-    def refresh(self, pos: Pos, visible: bool):
-        super().refresh(pos, visible)
+    pass
 
 
 class Frame(Window):
