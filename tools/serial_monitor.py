@@ -166,8 +166,8 @@ class Status(Window):
 
 
 class Navigation(Window):
-    def __init__(self, stdscr, size: Size):
-        super().__init__(stdscr, size)
+    def __init__(self, stdscr):
+        super().__init__(stdscr, Size(1, 0))
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
@@ -175,8 +175,8 @@ class Navigation(Window):
 
 
 class Logs(Window):
-    def __init__(self, stdscr, size: Size, entries: list):
-        super().__init__(stdscr, size)
+    def __init__(self, stdscr, entries: list):
+        super().__init__(stdscr, Size(0, 0))
         self.entries = entries
         self.logs = list()
 
@@ -223,10 +223,8 @@ class LogsMonitor():
         head_config = config.get('head', None)
         self.head = self._create_window(head_config) if head_config else None
 
-        self.logs = Logs(stdscr,
-                         Size(0, 0),
-                         self._create_entries(config['logs']))
-        self.nav = Navigation(stdscr, Size(1, 0))
+        self.logs = Logs(stdscr, self._create_entries(config.get('logs', [])))
+        self.nav = Navigation(stdscr)
         self.observers.append(self.logs)
 
         self.refresh()
