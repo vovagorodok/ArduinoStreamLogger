@@ -4,6 +4,8 @@ import textwrap
 import yaml
 import curses
 import serial
+import os
+from datetime import datetime
 from dataclasses import dataclass
 
 
@@ -170,19 +172,130 @@ class Navigation(Window):
         self.clear()
 
 
+class LogsFile():
+    def __init__(self, logs_dir: str):
+        os.makedirs(logs_dir, exist_ok=True)
+        self.file = open(os.path.join(
+            logs_dir, f"{datetime.now()}.log"), 'bw+')
+        self.buffer = list()
+        self.buffer_size = 0
+        self.filter = ''
+        self.held = False
+
+    def write_log(self, log: str):
+        pos = self.file.tell()
+        self.file.seek(0, os.SEEK_END)
+        self._write_line(log)
+        if self.held:
+            self.file.seek(pos)
+        elif self.filter in log:
+            self.buffer.append(log)
+            if len(self.buffer) > self.buffer_size:
+                self.buffer.pop(0)
+
+    def read_logs(self, size: int):
+        if self.buffer_size != size:
+            self._update_buffer()
+        self.buffer_size = size
+        return self.buffer
+
+    def set_filter(self, filter: str):
+        self.filter = filter
+        self._update_buffer()
+
+    def hold_cursor(self):
+        self.held = True
+
+    def unhold_cursor(self):
+        self.held = False
+        self.file.seek(0, os.SEEK_END)
+        self._update_buffer()
+
+    def move_cursor(self, lines: int):
+        self.hold_cursor()
+        begin = self.file.tell()
+
+        if lines > 0:
+            self.file.seek(0, os.SEEK_END)
+            end = self.file.tell()
+            if begin == end:
+                return
+            for line in self._read_lines(begin + 1, end):
+                if self.filter in line:
+                    if self.file.tell() != end:
+                        self.file.seek(-1, os.SEEK_CUR)
+                    self._update_buffer()
+        elif lines < 0:
+            for line in self._read_lines_reverse(begin):
+                if self.filter in line:
+                    self.file.seek(len(line), os.SEEK_CUR)
+                    self._update_buffer()
+
+    def _update_buffer(self):
+        self.buffer.clear()
+        if len(self.buffer) >= self.buffer_size:
+            return
+
+        pos = self.file.tell()
+
+        for log in self._read_lines_reverse(pos):
+            if self.filter in log:
+                self.buffer.insert(0, log)
+            if len(self.buffer) >= self.buffer_size:
+                break
+
+        self.file.seek(pos)
+
+    def _write_line(self, line: str):
+        if self.file.tell():
+            line = f"\n{line}"
+        self.file.write(line.encode())
+
+    def _read_lines(self, begin: int, end: int):
+        pointer_location = begin
+        buffer = bytearray()
+        while pointer_location < end:
+            self.file.seek(pointer_location)
+            pointer_location += 1
+            new_byte = self.file.read(1)
+            if new_byte == b'\n':
+                yield buffer.decode()
+                buffer = bytearray()
+            else:
+                buffer.extend(new_byte)
+        if len(buffer) > 0:
+            yield buffer.decode()
+
+    def _read_lines_reverse(self, begin: int, end: int = 0):
+        pointer_location = begin
+        buffer = bytearray()
+        while pointer_location >= end:
+            self.file.seek(pointer_location)
+            pointer_location -= 1
+            new_byte = self.file.read(1)
+            if new_byte == b'\n':
+                yield buffer.decode()[::-1]
+                buffer = bytearray()
+            else:
+                buffer.extend(new_byte)
+        if len(buffer) > 0:
+            yield buffer.decode()[::-1]
+
+
 class Logs(Window):
-    def __init__(self, stdscr, entries: list):
+    def __init__(self, stdscr, logs_file: LogsFile, entries: list):
         super().__init__(stdscr, Size(0, 0))
         self.entries = entries
-        self.logs = list()
+        self.logs_file = logs_file
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
         self._redraw()
 
     def onLog(self, log: str):
-        self.logs.append(log)
-        self._redraw()
+        if self._should_show_log(log):
+            self.logs_file.write_log(log)
+            self._redraw()
 
     def _redraw(self):
         rows = self.size.rows
@@ -190,23 +303,27 @@ class Logs(Window):
             return
 
         self.clear()
-        show = self.logs[-rows:]
-        row = rows - len(show)
-        for line in range(len(show)):
-            self._draw_log(show[line], row + line)
+        logs = self.logs_file.read_logs(rows)
+        row = rows - len(logs)
+        for line in range(len(logs)):
+            self._draw_log(logs[line], row + line)
 
     def _draw_log(self, log: str, row: int):
         for entry in self.entries:
             if log.startswith(entry.prefix):
-                if not entry.show:
-                    return
                 text = log if entry.show_prefix else log[len(entry.prefix):]
                 self.addstr(text, row, 0, entry.colors)
                 return
 
+    def _should_show_log(self, log: str):
+        for entry in self.entries:
+            if log.startswith(entry.prefix):
+                return entry.show
+        return False
+
 
 class LogsMonitor():
-    def __init__(self, stdscr, config):
+    def __init__(self, stdscr, config, logs_dir: str):
         self.stdscr = stdscr
         self.observers = list()
 
@@ -219,7 +336,8 @@ class LogsMonitor():
         head_config = config.get('head', None)
         self.head = self._create_window(head_config) if head_config else None
 
-        self.logs = Logs(stdscr, self._create_entries(config.get('logs', [])))
+        self.logs = Logs(stdscr, LogsFile(logs_dir),
+                         self._create_entries(config.get('logs', [])))
         self.nav = Navigation(stdscr)
         self.observers.append(self.logs)
 
@@ -353,12 +471,12 @@ def main(stdscr):
     curses.start_color()
     curses.use_default_colors()
     stdscr.nodelay(True)
-    logs_monitor = LogsMonitor(stdscr, config)
+    logs_monitor = LogsMonitor(stdscr, config, args.logs_dir)
 
     try:
         while True:
             ch = stdscr.getch()
-            if ch == curses.KEY_RESIZE or ch == curses.KEY_RESUME:
+            if ch == curses.KEY_RESIZE:
                 logs_monitor.refresh()
             if ch == ord('q'):
                 exit()
