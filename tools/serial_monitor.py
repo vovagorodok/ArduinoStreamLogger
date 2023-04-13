@@ -195,8 +195,8 @@ class LogsFile():
 
     def read_logs(self, size: int):
         if self.buffer_size != size:
+            self.buffer_size = size
             self._update_buffer()
-        self.buffer_size = size
         return self.buffer
 
     def set_filter(self, filter: str):
@@ -233,8 +233,6 @@ class LogsFile():
 
     def _update_buffer(self):
         self.buffer.clear()
-        if len(self.buffer) >= self.buffer_size:
-            return
 
         pos = self.file.tell()
 
