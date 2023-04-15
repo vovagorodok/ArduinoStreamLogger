@@ -169,15 +169,6 @@ class Status(Window):
             self.addstr(self.log, 0, 0, self.colors)
 
 
-class Navigation(Window):
-    def __init__(self, stdscr):
-        super().__init__(stdscr, Size(1, 0))
-
-    def refresh(self, pos: Pos, visible: bool):
-        super().refresh(pos, visible)
-        self.clear()
-
-
 class LogsFile():
     def __init__(self, logs_dir: str):
         os.makedirs(logs_dir, exist_ok=True)
@@ -312,10 +303,12 @@ class Logs(Window):
     def unhold_cursor(self):
         self.logs_file.unhold_cursor()
         self._redraw()
+        self.stdscr.refresh()
 
     def move_cursor(self, move: CursorMove):
         self.logs_file.move_cursor(move)
         self._redraw()
+        self.stdscr.refresh()
 
     def _redraw(self):
         rows = self.size.rows
@@ -342,6 +335,30 @@ class Logs(Window):
         return False
 
 
+class Navigation(Window):
+    def __init__(self, stdscr, logs: Logs):
+        super().__init__(stdscr, Size(1, 0))
+        self.logs = logs
+
+    def refresh(self, pos: Pos, visible: bool):
+        super().refresh(pos, visible)
+        self.clear()
+
+    def pull(self, ch: int):
+        if ch == curses.KEY_ENTER or ch == 13 or ch == ord('\n'):
+            self.logs.hold_cursor()
+        if ch == 27:
+            self.logs.unhold_cursor()
+        if ch == curses.KEY_UP:
+            self.logs.move_cursor(CursorMove.UP)
+        if ch == curses.KEY_DOWN:
+            self.logs.move_cursor(CursorMove.DOWN)
+        # if ch == curses.KEY_MOUSE:
+        #     _, x, y, _, bstate = curses.getmouse()
+        if ch == ord('q'):
+            exit()
+
+
 class LogsMonitor():
     def __init__(self, stdscr, config, logs_dir: str):
         self.stdscr = stdscr
@@ -358,7 +375,7 @@ class LogsMonitor():
 
         self.logs = Logs(stdscr, LogsFile(logs_dir),
                          self._create_entries(config.get('logs', [])))
-        self.nav = Navigation(stdscr)
+        self.nav = Navigation(stdscr, self.logs)
         self.observers.append(self.logs)
 
         self.refresh()
@@ -462,16 +479,12 @@ class LogsMonitor():
             observer.on_log(log)
         self.stdscr.refresh()
 
-    def on_enter(self):
-        self.logs.hold_cursor()
-        self.stdscr.refresh()
-
-    def on_escape(self):
-        self.logs.unhold_cursor()
-
-    def move_cursor(self, move: CursorMove):
-        self.logs.move_cursor(move)
-        self.stdscr.refresh()
+    def pull(self):
+        ch = self.stdscr.getch()
+        if ch == curses.KEY_RESIZE:
+            self.refresh()
+        else:
+            self.nav.pull(ch)
 
 
 def main(stdscr):
@@ -507,19 +520,7 @@ def main(stdscr):
 
     try:
         while True:
-            ch = stdscr.getch()
-            if ch == curses.KEY_RESIZE:
-                logs_monitor.refresh()
-            if ch == 13 or ch == ord('\n'):
-                logs_monitor.on_enter()
-            if ch == 27:
-                logs_monitor.on_escape()
-            if ch == curses.KEY_UP:
-                logs_monitor.move_cursor(CursorMove.UP)
-            if ch == curses.KEY_DOWN:
-                logs_monitor.move_cursor(CursorMove.DOWN)
-            if ch == ord('q'):
-                exit()
+            logs_monitor.pull()
 
             try:
                 log = str(ser.readline().decode().strip('\r\n'))
