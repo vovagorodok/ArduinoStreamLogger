@@ -152,7 +152,7 @@ class Status(Window):
         super().refresh(pos, visible)
         self._redraw()
 
-    def onLog(self, log: str):
+    def on_log(self, log: str):
         if log.startswith(self.prefix):
             self.log = log if self.show_prefix else log[len(self.prefix):]
             self._redraw()
@@ -265,7 +265,7 @@ class LogsFile():
             yield buffer.decode()
 
     def _read_lines_reverse(self, begin: int, end: int = 0):
-        pointer_location = begin
+        pointer_location = begin - 1
         buffer = bytearray()
         while pointer_location >= end:
             self.file.seek(pointer_location)
@@ -290,10 +290,16 @@ class Logs(Window):
         super().refresh(pos, visible)
         self._redraw()
 
-    def onLog(self, log: str):
+    def on_log(self, log: str):
         if self._should_show_log(log):
             self.logs_file.write_log(log)
             self._redraw()
+
+    def hold_cursor(self):
+        self.logs_file.hold_cursor()
+
+    def unhold_cursor(self):
+        self.logs_file.unhold_cursor()
 
     def _redraw(self):
         rows = self.size.rows
@@ -435,9 +441,15 @@ class LogsMonitor():
 
         self.stdscr.refresh()
 
-    def onLog(self, log: str):
+    def on_log(self, log: str):
         for observer in self.observers:
-            observer.onLog(log)
+            observer.on_log(log)
+
+    def on_enter(self):
+        self.logs.hold_cursor()
+
+    def on_escape(self):
+        self.logs.unhold_cursor()
 
 
 def main(stdscr):
@@ -476,6 +488,10 @@ def main(stdscr):
             ch = stdscr.getch()
             if ch == curses.KEY_RESIZE:
                 logs_monitor.refresh()
+            if ch == 13 or ch == ord('\n'):
+                logs_monitor.on_enter()
+            if ch == 27:
+                logs_monitor.on_escape()
             if ch == ord('q'):
                 exit()
 
@@ -489,7 +505,7 @@ def main(stdscr):
                 exit()
 
             if len(log):
-                logs_monitor.onLog(log)
+                logs_monitor.on_log(log)
 
     except KeyboardInterrupt:
         exit()
