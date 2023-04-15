@@ -5,6 +5,7 @@ import yaml
 import curses
 import serial
 import os
+from enum import Enum
 from datetime import datetime
 from dataclasses import dataclass
 
@@ -40,6 +41,11 @@ PREDEFINED_COLORS = {
     'white': curses.COLOR_WHITE,
     'grey': 8
 }
+
+
+class CursorMove(Enum):
+    UP: int = 1
+    DOWN: int = -1
 
 
 class Window():
@@ -211,25 +217,30 @@ class LogsFile():
         self.file.seek(0, os.SEEK_END)
         self._update_buffer()
 
-    def move_cursor(self, lines: int):
+    def move_cursor(self, move: CursorMove):
         self.hold_cursor()
-        begin = self.file.tell()
+        pos = self.file.tell()
 
-        if lines > 0:
+        if move == CursorMove.UP:
             self.file.seek(0, os.SEEK_END)
-            end = self.file.tell()
-            if begin == end:
-                return
-            for line in self._read_lines(begin + 1, end):
+            eof_pos = self.file.tell()
+            pos += min(len('\n'), pos)
+            pos = min(eof_pos, pos)
+            for line in self._read_lines(pos, eof_pos):
+                pos += len(line)
                 if self.filter in line:
-                    if self.file.tell() != end:
-                        self.file.seek(-1, os.SEEK_CUR)
+                    self.file.seek(pos)
                     self._update_buffer()
-        elif lines < 0:
-            for line in self._read_lines_reverse(begin):
+                    return
+                pos += len('\n')
+        elif move == CursorMove.DOWN:
+            for line in self._read_lines_reverse(pos):
+                pos -= len(line) + len('\n')
+                pos = max(0, pos)
                 if self.filter in line:
-                    self.file.seek(len(line), os.SEEK_CUR)
+                    self.file.seek(pos)
                     self._update_buffer()
+                    return
 
     def _update_buffer(self):
         self.buffer.clear()
@@ -300,6 +311,9 @@ class Logs(Window):
 
     def unhold_cursor(self):
         self.logs_file.unhold_cursor()
+
+    def move_cursor(self, move: CursorMove):
+        self.logs_file.move_cursor(move)
 
     def _redraw(self):
         rows = self.size.rows
@@ -451,6 +465,9 @@ class LogsMonitor():
     def on_escape(self):
         self.logs.unhold_cursor()
 
+    def move_cursor(self, move: CursorMove):
+        self.logs.move_cursor(move)
+
 
 def main(stdscr):
     parser = argparse.ArgumentParser(
@@ -492,6 +509,10 @@ def main(stdscr):
                 logs_monitor.on_enter()
             if ch == 27:
                 logs_monitor.on_escape()
+            if ch == curses.KEY_UP:
+                logs_monitor.move_cursor(CursorMove.UP)
+            if ch == curses.KEY_DOWN:
+                logs_monitor.move_cursor(CursorMove.DOWN)
             if ch == ord('q'):
                 exit()
 
