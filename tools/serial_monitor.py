@@ -221,7 +221,7 @@ class LogsFile():
         self.hold_cursor()
         pos = self.file.tell()
 
-        if move == CursorMove.UP:
+        if move == CursorMove.DOWN:
             self.file.seek(0, os.SEEK_END)
             eof_pos = self.file.tell()
             pos += min(len('\n'), pos)
@@ -233,7 +233,7 @@ class LogsFile():
                     self._update_buffer()
                     return
                 pos += len('\n')
-        elif move == CursorMove.DOWN:
+        elif move == CursorMove.UP:
             for line in self._read_lines_reverse(pos):
                 pos -= len(line) + len('\n')
                 pos = max(0, pos)
