@@ -311,9 +311,11 @@ class Logs(Window):
 
     def unhold_cursor(self):
         self.logs_file.unhold_cursor()
+        self._redraw()
 
     def move_cursor(self, move: CursorMove):
         self.logs_file.move_cursor(move)
+        self._redraw()
 
     def _redraw(self):
         rows = self.size.rows
@@ -458,15 +460,18 @@ class LogsMonitor():
     def on_log(self, log: str):
         for observer in self.observers:
             observer.on_log(log)
+        self.stdscr.refresh()
 
     def on_enter(self):
         self.logs.hold_cursor()
+        self.stdscr.refresh()
 
     def on_escape(self):
         self.logs.unhold_cursor()
 
     def move_cursor(self, move: CursorMove):
         self.logs.move_cursor(move)
+        self.stdscr.refresh()
 
 
 def main(stdscr):
