@@ -1,4 +1,10 @@
 # Serial monitor
+Console application to display and store logs.\
+Just run:
+```
+./tools/serial_monitor.sh
+```
+You can easely run from your project. See `tools\examples` how to do that.
 
 ## Colors
 Each color has integer value.\
