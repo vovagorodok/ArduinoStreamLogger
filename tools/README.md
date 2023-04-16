@@ -54,4 +54,13 @@ Log Entry:
  - `show`: optional. Show and store log. Default `0`
  - `colors`: optional
 
- ## Window structures:
+## Window structures:
+Space (empty space):
+ - `size`: mandatory
+ - `colors`: optional
+
+ Frame (frame around window):
+ - `name`: optional. Default empty
+ - `borders`: optional. Enable borders. Default `false`
+ - `colors`: optional
+ - `window`: mandatory. Window inside frame
