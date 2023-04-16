@@ -42,7 +42,8 @@ Head:
 
 ## General structures:
 Colors:
-```
  - `foreground`: optional. Example `green` or `2`
  - `background`: optional.
-```
+Size:
+ - `rows`: optional. Default `0`
+ - `cols`: optional. Default `0`
