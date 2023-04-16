@@ -8,7 +8,7 @@ or
 ```
 python3 serial_monitor.py --config=<path to config yaml>
 ```
-You can easely run from your project. See `tools\examples` how to do that.
+You can easely run from your project. Add to your `tools` content of `tools\examples` and modify it.
 
 ## Colors
 Each color has integer value.\
