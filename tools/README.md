@@ -24,7 +24,7 @@ magenta 5
 cyan    6
 white   7
 ```
-Color plate can be extended to 256 colors. In order to check each color number run `show_colors.py`. \
+Color plate can be extended to 256 colors. In order to check each color number run `show_colors.py`.
 
 ## Custom config:
 Config can contain general, head and logs parameters.\
