@@ -54,10 +54,13 @@ class Window():
         self.pos = Pos(0, 0)
         self.visible = False
 
-    def clear(self):
+    def clear(self, colors: int = 0):
         spaces = ' ' * self.size.cols
         for row in range(self.size.rows):
-            self.stdscr.addstr(self.pos.row + row, self.pos.col, spaces)
+            self.stdscr.addstr(self.pos.row + row,
+                               self.pos.col,
+                               spaces,
+                               curses.color_pair(colors))
 
     def addstr(self, text: str, row: int = 0, col: int = 0, colors: int = 0):
         start_row = self.pos.row + row
@@ -68,7 +71,8 @@ class Window():
         lines = text.splitlines()[:max_rows]
         for line_num, line in enumerate(lines):
             self.stdscr.addstr(start_row + line_num,
-                               start_col, line[:max_cols],
+                               start_col,
+                               line[:max_cols],
                                curses.color_pair(colors))
 
     def refresh(self, pos: Pos, visible: bool):
@@ -146,12 +150,22 @@ class Col(Window):
 
 
 class Status(Window):
-    def __init__(self, stdscr, size: Size, prefix: str, show_prefix: bool, colors: int, initial: str):
+    def __init__(self,
+                 stdscr,
+                 size: Size,
+                 prefix: str,
+                 show_prefix: bool,
+                 colors: int,
+                 initial: str,
+                 wrap_around: bool,
+                 insert_spaces: bool):
         super().__init__(stdscr, size)
         self.prefix = prefix
         self.show_prefix = show_prefix
         self.colors = colors
         self.log = initial
+        self.wrap_around = wrap_around
+        self.insert_spaces = insert_spaces
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
@@ -160,11 +174,29 @@ class Status(Window):
     def on_log(self, log: str):
         if log.startswith(self.prefix):
             self.log = log if self.show_prefix else log[len(self.prefix):]
+            self._format_log()
             self._redraw()
+
+    def _format_log(self):
+        col = 0
+        formated_log = ''
+        for ch in self.log:
+            col += 1
+            if self.wrap_around and col >= self.size.cols:
+                col = 0
+                formated_log += '\n'
+            formated_log += ch
+            if self.insert_spaces:
+                col += 1
+                if self.wrap_around and col >= self.size.cols:
+                    col = 0
+                    formated_log += '\n'
+                else:
+                    formated_log += ' '
 
     def _redraw(self):
         if self.visible:
-            self.clear()
+            self.clear(self.colors)
             self.addstr(self.log, 0, 0, self.colors)
 
 
@@ -575,7 +607,9 @@ class LogsMonitor():
                         config.get('prefix', ""),
                         config.get('show_prefix', False),
                         self._create_colors(config.get('colors', {})),
-                        config.get('initial', ""))
+                        config.get('initial', ""),
+                        config.get('wrap_around', False),
+                        config.get('insert_spaces', False))
         self.observers.append(status)
         return status
 
