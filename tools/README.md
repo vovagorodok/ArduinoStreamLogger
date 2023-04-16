@@ -43,8 +43,15 @@ Head:
 ## General structures:
 Colors:
  - `foreground`: optional. Example `green` or `2`
- - `background`: optional.
+ - `background`: optional
 
 Size:
  - `rows`: optional. Default `0`
  - `cols`: optional. Default `0`
+
+Log Entry:
+ - `prefix`: optional. Example `INF: `. Default empty
+ - `show`: optional. Show and store log. Default `0`
+ - `colors`: optional
+
+ ## Window structures:
