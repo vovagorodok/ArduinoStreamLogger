@@ -357,11 +357,20 @@ class Navigation(Window):
         self.logs = logs
         self.colors = colors
         self.stoped = False
+        self.searching = False
+        self.filtering = False
+        self.filter = ''
         self.stop_button = NavigationButton(
             stdscr, Size(1, 13), 'ENTER', 'Stop'.ljust(10), colors)
         self.resume_button = NavigationButton(
             stdscr, Size(1, 11), 'ESC', 'Resume'.ljust(10), colors)
-        self.buttons = [
+        self.edit_buttons = [
+            NavigationButton(stdscr, Size(1, 13), 'ENTER',
+                             'Apply'.ljust(10), colors),
+            NavigationButton(stdscr, Size(1, 11), 'ESC',
+                             'Cancel'.ljust(10), colors)
+        ]
+        self.main_buttons = [
             NavigationButton(stdscr, Size(1, 10), 'F3',
                              'Search'.ljust(10), colors),
             NavigationButton(stdscr, Size(1, 10), 'F4',
@@ -376,34 +385,72 @@ class Navigation(Window):
 
     def pull(self, ch: int):
         if ch == curses.KEY_ENTER or ch == 13 or ch == ord('\n'):
-            self.logs.hold_cursor()
-            self.stoped = True
+            if self.filtering:
+                self.filtering = False
+                self.logs.set_filter(self.filter)
+            else:
+                self.logs.hold_cursor()
+                self.stoped = True
             self._redraw()
-        if ch == 27:
-            self.logs.unhold_cursor()
-            self.stoped = False
+        elif ch == 27:
+            if self.filtering:
+                self.filtering = False
+                self.filter = ''
+                self.logs.set_filter(self.filter)
+            else:
+                self.logs.unhold_cursor()
+                self.stoped = False
             self._redraw()
-        if ch == curses.KEY_UP:
+        elif ch == curses.KEY_UP:
             self.logs.move_cursor(CursorMove.UP)
             self.stoped = True
             self._redraw()
-        if ch == curses.KEY_DOWN:
+        elif ch == curses.KEY_DOWN:
             self.logs.move_cursor(CursorMove.DOWN)
             self.stoped = True
             self._redraw()
-        # if ch == curses.KEY_MOUSE:
-        #     _, x, y, _, bstate = curses.getmouse()
-        if ch == curses.KEY_F10 or ch == ord('q'):
+        elif ch == curses.KEY_F4:
+            self.filtering = True
+            self._redraw()
+        elif ch == curses.KEY_F10:
             exit()
+
+        if self.filtering:
+            if ch == curses.KEY_BACKSPACE:
+                self.filter = self.filter[:-1]
+                self._redraw()
+            elif ch >= ord('!') and ch <= ord('~'):
+                self.filter += chr(ch)
+                self._redraw()
+        else:
+            if ch == ord('q'):
+                exit()
 
     def _redraw(self):
         buttons = list()
-        buttons.append(self.resume_button if self.stoped else self.stop_button)
-        buttons += self.buttons
+        if self.filtering:
+            buttons += self.edit_buttons
+        else:
+            buttons.append(
+                self.resume_button if self.stoped else self.stop_button)
+            buttons += self.main_buttons
 
         col = self.pos.col
         self.addstr(' ' * 2, 0, col, self.colors)
         col += 2
+
+        if self.filtering:
+            if col + len('FILTER:') + 20 > self.size.cols:
+                return
+            self.addstr('FILTER:', 0, col, self.colors)
+            col += len('FILTER:')
+            self.addstr(self.filter[-20:].ljust(20), 0, col)
+            col += 20
+
+            if col + 2 <= self.size.cols:
+                self.addstr(' ' * 2, 0, col, self.colors)
+                col += 2
+
         for button in buttons:
             if col + button.size.cols > self.size.cols:
                 break
