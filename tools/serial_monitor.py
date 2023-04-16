@@ -447,6 +447,7 @@ class Navigation(Window):
         elif ch == curses.KEY_F3:
             self.searching = True
             self.filtering = False
+            self.stoped = True
             self._redraw()
         elif ch == curses.KEY_F4:
             self.filtering = True
