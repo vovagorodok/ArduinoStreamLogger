@@ -731,7 +731,7 @@ def main(stdscr):
             logs_monitor.pull()
 
             try:
-                log = str(ser.readline().decode().strip('\0'))
+                log = str(ser.readline().decode().strip('\r\n\0'))
             except UnicodeDecodeError:
                 continue
             except serial.serialutil.SerialException as e:
