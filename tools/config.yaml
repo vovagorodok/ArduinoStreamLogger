@@ -1,35 +1,5 @@
 port: /dev/ttyUSB0
 baudrate: 115200
-head:
-  col:
-    - frame:
-        name: 'Last:'
-        borders: true
-        window:
-          status:
-            size:
-              rows: 1
-              cols: 100
-            prefix: ''
-            show_prefix: true
-            initial: '<no data>'
-    - space:
-        cols: 1
-    - frame:
-        name: 'Error:'
-        borders: true
-        colors:
-          foreground: red
-        window:
-          status:
-            size:
-              rows: 1
-              cols: 100
-            prefix: 'ERR: '
-            show_prefix: false
-            colors:
-              foreground: red
-            initial: '<no data>'
 logs:
   - prefix: 'DBG: '
     show_prefix: true
