@@ -200,6 +200,33 @@ class LogsFile():
         self.filter = filter
         self._update_buffer()
 
+    def search(self, text: str):
+        self.hold_cursor()
+        pos = self.file.tell()
+
+        next_pos = pos
+        self.file.seek(0, os.SEEK_END)
+        eof_pos = self.file.tell()
+        next_pos += min(len('\n'), next_pos)
+        next_pos = min(eof_pos, next_pos)
+        for line in self._read_lines(next_pos, eof_pos):
+            next_pos += len(line)
+            if text in line:
+                self.file.seek(next_pos)
+                self._update_buffer()
+                return
+            next_pos += len('\n')
+        next_pos = 0
+        for line in self._read_lines(next_pos, pos):
+            next_pos += len(line)
+            if text in line:
+                self.file.seek(next_pos)
+                self._update_buffer()
+                return
+            next_pos += len('\n')
+
+        self.file.seek(next_pos)
+
     def hold_cursor(self):
         self.held = True
 
@@ -312,6 +339,10 @@ class Logs(Window):
         self.logs_file.set_filter(filter)
         self._redraw()
 
+    def search(self, text: str):
+        self.logs_file.search(text)
+        self._redraw()
+
     def _redraw(self):
         rows = self.size.rows
         if not self.visible or not rows:
@@ -358,6 +389,7 @@ class Navigation(Window):
         self.colors = colors
         self.stoped = False
         self.searching = False
+        self.search = ''
         self.filtering = False
         self.filter = ''
         self.stop_button = NavigationButton(
@@ -388,6 +420,9 @@ class Navigation(Window):
             if self.filtering:
                 self.filtering = False
                 self.logs.set_filter(self.filter)
+            elif self.searching:
+                self.searching = False
+                self.logs.search(self.search)
             else:
                 self.logs.hold_cursor()
                 self.stoped = True
@@ -409,8 +444,13 @@ class Navigation(Window):
             self.logs.move_cursor(CursorMove.DOWN)
             self.stoped = True
             self._redraw()
+        elif ch == curses.KEY_F3:
+            self.searching = True
+            self.filtering = False
+            self._redraw()
         elif ch == curses.KEY_F4:
             self.filtering = True
+            self.searching = False
             self._redraw()
         elif ch == curses.KEY_F10:
             exit()
@@ -422,13 +462,20 @@ class Navigation(Window):
             elif ch >= ord('!') and ch <= ord('~'):
                 self.filter += chr(ch)
                 self._redraw()
+        elif self.searching:
+            if ch == curses.KEY_BACKSPACE:
+                self.search = self.search[:-1]
+                self._redraw()
+            elif ch >= ord('!') and ch <= ord('~'):
+                self.search += chr(ch)
+                self._redraw()
         else:
             if ch == ord('q'):
                 exit()
 
     def _redraw(self):
         buttons = list()
-        if self.filtering:
+        if self.filtering or self.searching:
             buttons += self.edit_buttons
         else:
             buttons.append(
@@ -439,12 +486,15 @@ class Navigation(Window):
         self.addstr(' ' * 2, 0, col, self.colors)
         col += 2
 
-        if self.filtering:
-            if col + len('FILTER:') + 20 > self.size.cols:
+        if self.filtering or self.searching:
+            edit_prefix = 'FILTER:' if self.filtering else 'SEARCH:'
+            if col + len(edit_prefix) + 20 > self.size.cols:
                 return
-            self.addstr('FILTER:', 0, col, self.colors)
-            col += len('FILTER:')
-            self.addstr(self.filter[-20:].ljust(20), 0, col)
+            self.addstr(edit_prefix, 0, col, self.colors)
+            col += len(edit_prefix)
+
+            edit_text = self.filter if self.filtering else self.search
+            self.addstr(edit_text[-20:].ljust(20), 0, col)
             col += 20
 
             if col + 2 <= self.size.cols:
