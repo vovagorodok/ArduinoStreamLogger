@@ -59,8 +59,23 @@ Space (empty space):
  - `size`: mandatory
  - `colors`: optional
 
- Frame (frame around window):
+Frame (frame around window):
  - `name`: optional. Default empty
  - `borders`: optional. Enable borders. Default `false`
  - `colors`: optional
  - `window`: mandatory. Window inside frame
+
+Row (row of window structures):
+ - list of window structures
+
+Col (column of window structures):
+ - list of window structures
+
+Status (status of specific log):
+ - `size`: mandatory
+ - `prefix`: optional. Example `INF: `. Default empty
+ - `show_prefix`: optional. Default `false`
+ - `colors`: optional
+ - `initial`: optional. Example `wait for data..`. Default empty
+ - `wrap_around`: optional. Move to new line if log is to long. Default `false`
+ - `insert_spaces`: optional. Insert spaces between each char. Default `false`
