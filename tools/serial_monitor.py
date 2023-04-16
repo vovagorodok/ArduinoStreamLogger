@@ -573,6 +573,7 @@ class LogsMonitor():
         status = Status(self.stdscr,
                         self._create_size(config['size']),
                         config.get('prefix', ""),
+                        config.get('show_prefix', False),
                         self._create_colors(config.get('colors', {})),
                         config.get('initial', ""))
         self.observers.append(status)
