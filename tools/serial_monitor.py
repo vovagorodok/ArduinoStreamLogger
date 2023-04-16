@@ -303,12 +303,14 @@ class Logs(Window):
     def unhold_cursor(self):
         self.logs_file.unhold_cursor()
         self._redraw()
-        self.stdscr.refresh()
 
     def move_cursor(self, move: CursorMove):
         self.logs_file.move_cursor(move)
         self._redraw()
-        self.stdscr.refresh()
+
+    def set_filter(self, filter: str):
+        self.logs_file.set_filter(filter)
+        self._redraw()
 
     def _redraw(self):
         rows = self.size.rows
@@ -335,28 +337,81 @@ class Logs(Window):
         return False
 
 
-class Navigation(Window):
-    def __init__(self, stdscr, logs: Logs):
-        super().__init__(stdscr, Size(1, 0))
-        self.logs = logs
+class NavigationButton(Window):
+    def __init__(self, stdscr, size: Size, key: str, text: str, colors: int):
+        super().__init__(stdscr, size)
+        self.key = key
+        self.text = text
+        self.colors = colors
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
-        self.clear()
+        if self.visible:
+            self.addstr(self.key)
+            self.addstr(self.text, 0, len(self.key), self.colors)
+
+
+class Navigation(Window):
+    def __init__(self, stdscr, logs: Logs, colors: int):
+        super().__init__(stdscr, Size(1, 0))
+        self.logs = logs
+        self.colors = colors
+        self.stoped = False
+        self.stop_button = NavigationButton(
+            stdscr, Size(1, 13), 'ENTER', 'Stop'.ljust(10), colors)
+        self.resume_button = NavigationButton(
+            stdscr, Size(1, 11), 'ESC', 'Resume'.ljust(10), colors)
+        self.buttons = [
+            NavigationButton(stdscr, Size(1, 10), 'F3',
+                             'Search'.ljust(10), colors),
+            NavigationButton(stdscr, Size(1, 10), 'F4',
+                             'Filter'.ljust(10), colors),
+            NavigationButton(stdscr, Size(1, 10), 'F10',
+                             'Quit'.ljust(10), colors)
+        ]
+
+    def refresh(self, pos: Pos, visible: bool):
+        super().refresh(pos, visible)
+        self._redraw()
 
     def pull(self, ch: int):
         if ch == curses.KEY_ENTER or ch == 13 or ch == ord('\n'):
             self.logs.hold_cursor()
+            self.stoped = True
+            self._redraw()
         if ch == 27:
             self.logs.unhold_cursor()
+            self.stoped = False
+            self._redraw()
         if ch == curses.KEY_UP:
             self.logs.move_cursor(CursorMove.UP)
+            self.stoped = True
+            self._redraw()
         if ch == curses.KEY_DOWN:
             self.logs.move_cursor(CursorMove.DOWN)
+            self.stoped = True
+            self._redraw()
         # if ch == curses.KEY_MOUSE:
         #     _, x, y, _, bstate = curses.getmouse()
-        if ch == ord('q'):
+        if ch == curses.KEY_F10 or ch == ord('q'):
             exit()
+
+    def _redraw(self):
+        buttons = list()
+        buttons.append(self.resume_button if self.stoped else self.stop_button)
+        buttons += self.buttons
+
+        col = self.pos.col
+        self.addstr(' ' * 2, 0, col, self.colors)
+        col += 2
+        for button in buttons:
+            if col + button.size.cols > self.size.cols:
+                break
+            button.refresh(Pos(self.pos.row, col), self.visible)
+            col += button.size.cols
+        self.addstr(' ' * (self.size.cols - col), 0, col, self.colors)
+
+        self.stdscr.refresh()
 
 
 class LogsMonitor():
@@ -375,8 +430,11 @@ class LogsMonitor():
 
         self.logs = Logs(stdscr, LogsFile(logs_dir),
                          self._create_entries(config.get('logs', [])))
-        self.nav = Navigation(stdscr, self.logs)
         self.observers.append(self.logs)
+
+        nav_colors = self._create_colors(config.get(
+            'navigation_colors', {'foreground': 'black', 'background': 'cyan'}))
+        self.nav = Navigation(stdscr, self.logs, nav_colors)
 
         self.refresh()
 
@@ -470,7 +528,7 @@ class LogsMonitor():
 
         logs_pos = self.head.size.rows if enable_head else 0
         self.logs.resize(Size(free_size, cols))
-        self.logs.refresh(Pos(logs_pos, 0), True)
+        self.logs.refresh(Pos(logs_pos, 0), free_size)
 
         self.stdscr.refresh()
 
