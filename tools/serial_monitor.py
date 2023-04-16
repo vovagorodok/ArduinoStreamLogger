@@ -181,18 +181,18 @@ class Status(Window):
         col = 0
         formated_log = ''
         for ch in self.log:
-            col += 1
             if self.wrap_around and col >= self.size.cols:
                 col = 0
                 formated_log += '\n'
             formated_log += ch
+            col += 1
             if self.insert_spaces:
-                col += 1
                 if self.wrap_around and col >= self.size.cols:
                     col = 0
                     formated_log += '\n'
                 else:
                     formated_log += ' '
+                    col += 1
         self.log = formated_log
 
     def _redraw(self):
