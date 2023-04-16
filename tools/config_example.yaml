@@ -15,7 +15,7 @@ head:
               cols: 100
             prefix: ''
             show_prefix: true
-            initial: '<no data>'
+            initial: '...'
     - space:
         size:
           rows: 1
@@ -34,7 +34,7 @@ head:
             show_prefix: false
             colors:
               foreground: red
-            initial: '<no data>'
+            initial: '...'
 logs:
   - prefix: 'DBG: '
     show: true
