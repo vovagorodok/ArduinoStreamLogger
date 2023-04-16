@@ -84,7 +84,14 @@ class Window():
 
 
 class Space(Window):
-    pass
+    def __init__(self, stdscr, size: Size, colors: int):
+        super().__init__(stdscr, size)
+        self.colors = colors
+
+    def refresh(self, pos: Pos, visible: bool):
+        super().refresh(pos, visible)
+        if visible:
+            self.clear(self.colors)
 
 
 class Frame(Window):
@@ -587,7 +594,9 @@ class LogsMonitor():
         return list(map(lambda cfg: self._create_window(cfg), config))
 
     def _create_space(self, config):
-        return Space(self.stdscr, self._create_size(config))
+        return Space(self.stdscr,
+                     self._create_size(config['size']),
+                     self._create_colors(config.get('colors', {})))
 
     def _create_frame(self, config):
         return Frame(self.stdscr,

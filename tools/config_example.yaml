@@ -17,7 +17,9 @@ head:
             show_prefix: true
             initial: '<no data>'
     - space:
-        cols: 1
+        size:
+          rows: 1
+          cols: 100
     - frame:
         name: 'Error:'
         borders: true
