@@ -193,6 +193,7 @@ class Status(Window):
                     formated_log += '\n'
                 else:
                     formated_log += ' '
+        self.log = formated_log
 
     def _redraw(self):
         if self.visible:
