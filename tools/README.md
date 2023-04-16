@@ -1,3 +1,5 @@
+# Serial monitor
+
 ## Colors
 Each color has integer value.\
 Set `-1` in order to use default color.\
