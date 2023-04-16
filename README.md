@@ -35,9 +35,14 @@ LOG_CALL_IF_DEBUG(LOG_DEBUG << foo());
 ```
 
 ## Additional format options
+Disable prefix:
 ```
 build_flags =
-	-D LOG_FORMAT_WITH_PREFIX
+	-D LOG_FORMAT_WITHOUT_PREFIX
+```
+Custom separator:
+```
+build_flags =
 	-D LOG_FORMAT_SEPARATOR='"\\\\"'
 ```
-Default separator is `": "`. Use `LOG_FORMAT_SEPARATOR` to change it.
+Default separator is `": "`.

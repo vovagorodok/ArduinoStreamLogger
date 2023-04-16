@@ -13,7 +13,7 @@ struct LogEntry {
         #endif
 
         #ifndef LOG_LEVEL_DISABLED
-        #ifdef LOG_FORMAT_WITH_PREFIX
+        #ifndef LOG_FORMAT_WITHOUT_PREFIX
         logPrefix<level>();
         #endif
         #endif
