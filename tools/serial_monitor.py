@@ -201,7 +201,6 @@ class LogsFile():
         self._update_buffer()
 
     def search(self, text: str):
-        self.hold_cursor()
         pos = self.file.tell()
 
         next_pos = pos
@@ -211,7 +210,7 @@ class LogsFile():
         next_pos = min(eof_pos, next_pos)
         for line in self._read_lines(next_pos, eof_pos):
             next_pos += len(line)
-            if text in line:
+            if self.filter in line and text in line:
                 self.file.seek(next_pos)
                 self._update_buffer()
                 return
@@ -219,7 +218,7 @@ class LogsFile():
         next_pos = 0
         for line in self._read_lines(next_pos, pos):
             next_pos += len(line)
-            if text in line:
+            if self.filter in line and text in line:
                 self.file.seek(next_pos)
                 self._update_buffer()
                 return
@@ -447,6 +446,7 @@ class Navigation(Window):
         elif ch == curses.KEY_F3:
             self.searching = True
             self.filtering = False
+            self.logs.hold_cursor()
             self.stoped = True
             self._redraw()
         elif ch == curses.KEY_F4:
