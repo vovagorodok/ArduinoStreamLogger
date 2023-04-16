@@ -2,23 +2,19 @@ port: /dev/ttyUSB0
 baudrate: 115200
 logs:
   - prefix: 'DBG: '
-    show_prefix: true
     show: true
     colors:
       foreground: 8
   - prefix: 'INF: '
-    show_prefix: true
     show: true
     colors:
       foreground: -1
       background: -1
   - prefix: 'WRN: '
-    show_prefix: true
     show: true
     colors:
       foreground: red
   - prefix: 'ERR: '
-    show_prefix: true
     show: true
     colors:
       background: red

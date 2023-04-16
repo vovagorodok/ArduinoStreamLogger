@@ -25,7 +25,6 @@ class Size:
 @dataclass
 class LogEntry():
     prefix: str
-    show_prefix: bool
     show: bool
     colors: int
 
@@ -309,10 +308,11 @@ class LogsFile():
 
 
 class Logs(Window):
-    def __init__(self, stdscr, logs_file: LogsFile, entries: list):
+    def __init__(self, stdscr, logs_file: LogsFile, entries: list, show_prefix: bool):
         super().__init__(stdscr, Size(0, 0))
         self.entries = entries
         self.logs_file = logs_file
+        self.show_prefix = show_prefix
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
@@ -356,7 +356,7 @@ class Logs(Window):
     def _draw_log(self, log: str, row: int):
         for entry in self.entries:
             if log.startswith(entry.prefix):
-                text = log if entry.show_prefix else log[len(entry.prefix):]
+                text = log if self.show_prefix else log[len(entry.prefix):]
                 self.addstr(text, row, 0, entry.colors)
                 return
 
@@ -527,7 +527,8 @@ class LogsMonitor():
         self.head = self._create_window(head_config) if head_config else None
 
         self.logs = Logs(stdscr, LogsFile(logs_dir),
-                         self._create_entries(config.get('logs', [])))
+                         self._create_entries(config.get('logs', [])),
+                         config.get('show_prefix', True))
         self.observers.append(self.logs)
 
         nav_colors = self._create_colors(config.get(
@@ -572,7 +573,6 @@ class LogsMonitor():
         status = Status(self.stdscr,
                         self._create_size(config['size']),
                         config.get('prefix', ""),
-                        config.get('show_prefix', False),
                         self._create_colors(config.get('colors', {})),
                         config.get('initial', ""))
         self.observers.append(status)
@@ -602,7 +602,6 @@ class LogsMonitor():
 
     def _create_entry(self, config):
         return LogEntry(config.get('prefix', ''),
-                        config.get('show_prefix', True),
                         config.get('show', True),
                         self._create_colors(config.get('colors', {})))
 
