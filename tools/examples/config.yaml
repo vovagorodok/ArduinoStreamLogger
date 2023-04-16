@@ -2,7 +2,7 @@ port: /dev/ttyUSB0
 baudrate: 115200
 show_prefix: true
 navigation_colors:
-  background: red
+  background: yellow
 head:
   col:
     - frame:
@@ -16,10 +16,6 @@ head:
             prefix: ''
             show_prefix: true
             initial: '...'
-    - space:
-        size:
-          rows: 1
-          cols: 100
     - frame:
         name: 'Error:'
         borders: true
@@ -35,6 +31,12 @@ head:
             colors:
               foreground: red
             initial: '...'
+    - space:
+        size:
+          rows: 1
+          cols: 102
+        colors:
+          background: white
 logs:
   - prefix: 'DBG: '
     show: true

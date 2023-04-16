@@ -29,6 +29,8 @@ class LogEntry():
     colors: int
 
 
+DEFAULT_COLORS = 0
+
 PREDEFINED_COLORS = {
     'black': curses.COLOR_BLACK,
     'red': curses.COLOR_RED,
@@ -54,7 +56,7 @@ class Window():
         self.pos = Pos(0, 0)
         self.visible = False
 
-    def clear(self, colors: int = 0):
+    def clear(self, colors: int = DEFAULT_COLORS):
         spaces = ' ' * self.size.cols
         for row in range(self.size.rows):
             self.stdscr.addstr(self.pos.row + row,
@@ -62,7 +64,7 @@ class Window():
                                spaces,
                                curses.color_pair(colors))
 
-    def addstr(self, text: str, row: int = 0, col: int = 0, colors: int = 0):
+    def addstr(self, text: str, row: int = 0, col: int = 0, colors: int = DEFAULT_COLORS):
         start_row = self.pos.row + row
         start_col = self.pos.col + col
         max_rows = max(0, self.size.rows - row)
@@ -558,13 +560,15 @@ class LogsMonitor():
         self.observers = list()
 
         self.last_color = 0
-        curses.init_pair(0, -1, -1)
+        curses.init_pair(DEFAULT_COLORS, -1, -1)
 
         self.stdscr.clear()
         self.stdscr.refresh()
 
         head_config = config.get('head', None)
         self.head = self._create_window(head_config) if head_config else None
+        self.head_cleaner = Space(
+            self.stdscr, self.head.size, DEFAULT_COLORS) if self.head else None
 
         self.logs = Logs(stdscr, LogsFile(logs_dir),
                          self._create_entries(config.get('logs', [])),
@@ -636,7 +640,7 @@ class LogsMonitor():
             background = PREDEFINED_COLORS[background]
 
         if foreground == -1 and background == -1:
-            return 0
+            return DEFAULT_COLORS
 
         self.last_color += 1
         curses.init_pair(self.last_color, foreground, background)
@@ -662,6 +666,9 @@ class LogsMonitor():
             enable_head = cols >= self.head.size.cols and free_size >= self.head.size.rows
             if enable_head:
                 free_size -= self.head.size.rows
+                cleaner_size = Size(self.head_cleaner.size.rows, cols)
+                self.head_cleaner.resize(cleaner_size)
+                self.head_cleaner.refresh(Pos(0, 0), True)
                 self.head.refresh(Pos(0, 0), True)
             else:
                 self.head.refresh(Pos(0, 0), False)
