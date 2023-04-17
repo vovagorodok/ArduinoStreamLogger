@@ -551,6 +551,13 @@ class Navigation(Window):
                 exit()
 
     def _redraw(self):
+        col = self._draw_panel()
+        free_cols = max(0, self.size.cols - col)
+        if free_cols:
+            self.addstr(' ' * free_cols, 0, col, self.colors)
+        self.stdscr.refresh()
+
+    def _draw_panel(self):
         buttons = list()
         if self.filtering or self.searching:
             buttons += self.edit_buttons
@@ -560,32 +567,42 @@ class Navigation(Window):
             buttons += self.main_buttons
 
         col = self.pos.col
+        max_cols = self.size.cols
+
+        if col + 2 > max_cols:
+            return col
         self.addstr(' ' * 2, 0, col, self.colors)
         col += 2
 
-        if self.filtering or self.searching:
-            edit_prefix = 'Filter:' if self.filtering else 'Search:'
-            if col + len(edit_prefix) + 20 > self.size.cols:
-                return
-            self.addstr(edit_prefix, 0, col, self.colors)
-            col += len(edit_prefix)
-
-            edit_text = self.filter if self.filtering else self.search
-            self.addstr(edit_text[-20:].ljust(20), 0, col)
-            col += 20
-
-            if col + 2 <= self.size.cols:
-                self.addstr(' ' * 2, 0, col, self.colors)
-                col += 2
-
         for button in buttons:
-            if col + button.size.cols > self.size.cols:
-                break
+            if col + button.size.cols > max_cols:
+                return col
             button.refresh(Pos(self.pos.row, col), self.visible)
             col += button.size.cols
-        self.addstr(' ' * (self.size.cols - col), 0, col, self.colors)
 
-        self.stdscr.refresh()
+        if not self.filtering and not self.searching:
+            return col
+
+        if col + 2 > max_cols:
+            return col
+        self.addstr(' ' * 2, 0, col)
+        col += 2
+
+        edit_prefix = 'Filter: ' if self.filtering else 'Search: '
+        if col + len(edit_prefix) > max_cols:
+            return col
+        self.addstr(edit_prefix, 0, col, self.colors)
+        col += len(edit_prefix)
+
+        free_cols = max_cols - col
+        if free_cols <= 0:
+            return col
+        edit_text = self.filter if self.filtering else self.search
+        visible_text = edit_text[-free_cols:].ljust(free_cols)
+        self.addstr(visible_text, 0, col, self.colors)
+        col += len(visible_text)
+
+        return col
 
 
 class LogsMonitor():
