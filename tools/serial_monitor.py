@@ -468,7 +468,7 @@ class Navigation(Window):
         self.filtering = False
         self.filter = ''
         self.stop_button = self._create_button('Enter', 'Stop'.ljust(7))
-        self.stop_button = self._create_button('Esc', 'Resume'.ljust(7))
+        self.resume_button = self._create_button('Esc', 'Resume'.ljust(7))
         self.edit_buttons = [
             self._create_button('Enter', 'Apply'.ljust(7)),
             self._create_button('Esc', 'Resume'.ljust(7))]
