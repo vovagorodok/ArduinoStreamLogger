@@ -564,7 +564,7 @@ class Navigation(Window):
         col += 2
 
         if self.filtering or self.searching:
-            edit_prefix = 'FILTER:' if self.filtering else 'SEARCH:'
+            edit_prefix = 'Filter:' if self.filtering else 'Search:'
             if col + len(edit_prefix) + 20 > self.size.cols:
                 return
             self.addstr(edit_prefix, 0, col, self.colors)
