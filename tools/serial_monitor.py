@@ -468,13 +468,13 @@ class Navigation(Window):
         self.filtering = False
         self.filter = ''
         self.stop_button = NavigationButton(
-            stdscr, Size(1, 13), 'ENTER', 'Stop'.ljust(10), colors)
+            stdscr, Size(1, 13), 'Enter', 'Stop'.ljust(10), colors)
         self.resume_button = NavigationButton(
-            stdscr, Size(1, 11), 'ESC', 'Resume'.ljust(10), colors)
+            stdscr, Size(1, 11), 'Esc', 'Resume'.ljust(10), colors)
         self.edit_buttons = [
-            NavigationButton(stdscr, Size(1, 13), 'ENTER',
+            NavigationButton(stdscr, Size(1, 13), 'Enter',
                              'Apply'.ljust(10), colors),
-            NavigationButton(stdscr, Size(1, 11), 'ESC',
+            NavigationButton(stdscr, Size(1, 11), 'Esc',
                              'Cancel'.ljust(10), colors)
         ]
         self.main_buttons = [
