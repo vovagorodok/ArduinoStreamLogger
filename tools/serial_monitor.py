@@ -619,17 +619,18 @@ class LogsMonitor():
     def _create_window(self, config):
         if 'space' in config:
             return self._create_space(config['space'])
-        if 'frame' in config:
+        elif 'frame' in config:
             return self._create_frame(config['frame'])
-        if 'row' in config:
+        elif 'row' in config:
             return self._create_row(config['row'])
-        if 'col' in config:
+        elif 'col' in config:
             return self._create_col(config['col'])
-        if 'label' in config:
+        elif 'label' in config:
             return self._create_label(config['label'])
-        if 'status' in config:
+        elif 'status' in config:
             return self._create_status(config['status'])
-        return None
+        else:
+            raise Exception(f"Invalid config\n {config}")
 
     def _create_windows(self, config):
         return list(map(lambda cfg: self._create_window(cfg), config))
@@ -790,6 +791,8 @@ def main(stdscr):
 
     except KeyboardInterrupt:
         exit()
+    except e:
+        exit_with_error(e)
 
 
 curses.wrapper(main)
