@@ -630,7 +630,7 @@ class LogsMonitor():
         elif 'status' in config:
             return self._create_status(config['status'])
         else:
-            raise Exception(f"Invalid config\n {config}")
+            raise ValueError(f"Invalid config\n {config}")
 
     def _create_windows(self, config):
         return list(map(lambda cfg: self._create_window(cfg), config))
@@ -791,7 +791,7 @@ def main(stdscr):
 
     except KeyboardInterrupt:
         exit()
-    except e:
+    except ValueError as e:
         exit_with_error(e)
 
 
