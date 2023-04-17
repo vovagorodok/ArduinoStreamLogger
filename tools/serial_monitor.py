@@ -570,9 +570,11 @@ class LogsMonitor():
         self.head_cleaner = Space(
             self.stdscr, self.head.size, DEFAULT_COLORS) if self.head else None
 
+        entries = self._create_entries(config.get(
+            'logs', [{'prefix': '', 'show': True}]))
         self.logs = Logs(stdscr,
                          LogsFile(logs_dir),
-                         self._create_entries(config.get('logs', [])),
+                         entries,
                          config.get('show_prefix', True))
         self.observers.append(self.logs)
 
