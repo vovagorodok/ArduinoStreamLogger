@@ -471,7 +471,7 @@ class Navigation(Window):
         self.resume_button = self._create_button('Esc', 'Resume'.ljust(7))
         self.edit_buttons = [
             self._create_button('Enter', 'Apply'.ljust(7)),
-            self._create_button('Esc', 'Resume'.ljust(7))]
+            self._create_button('Esc', 'Cancel'.ljust(7))]
         self.main_buttons = [
             self._create_button('F3', 'Search'.ljust(7)),
             self._create_button('F4', 'Filter'.ljust(7)),
