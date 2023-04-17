@@ -695,6 +695,12 @@ class LogsMonitor():
             self.nav.pull(ch)
 
 
+def exit_with_error(error):
+    curses.endwin()
+    print(f"\n{error}")
+    exit()
+
+
 def main(stdscr):
     parser = argparse.ArgumentParser(
         description=textwrap.dedent("""
@@ -710,9 +716,7 @@ def main(stdscr):
     try:
         config = yaml.safe_load(open(args.config))
     except FileNotFoundError as e:
-        curses.endwin()
-        print(e)
-        exit()
+        exit_with_error(e)
 
     try:
         ser = serial.Serial(
@@ -720,9 +724,7 @@ def main(stdscr):
             config.get('baudrate', 115200),
             timeout=.01)
     except serial.serialutil.SerialException as e:
-        curses.endwin()
-        print(e)
-        exit()
+        exit_with_error(e)
 
     curses.start_color()
     curses.use_default_colors()
@@ -738,9 +740,7 @@ def main(stdscr):
             except UnicodeDecodeError:
                 continue
             except serial.serialutil.SerialException as e:
-                curses.endwin()
-                print(e)
-                exit()
+                exit_with_error(e)
 
             if len(log):
                 logs_monitor.on_log(log)
