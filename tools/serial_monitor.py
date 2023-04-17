@@ -572,10 +572,8 @@ class LogsMonitor():
 
         entries = self._create_entries(config.get(
             'logs', [{'prefix': '', 'show': True}]))
-        self.logs = Logs(stdscr,
-                         LogsFile(logs_dir),
-                         entries,
-                         config.get('show_prefix', True))
+        self.logs = Logs(
+            stdscr, LogsFile(logs_dir), entries, config.get('show_prefix', True))
         self.observers.append(self.logs)
 
         nav_colors = self._create_colors(config.get(
@@ -717,7 +715,10 @@ def main(stdscr):
         exit()
 
     try:
-        ser = serial.Serial(config['port'], config['baudrate'], timeout=.01)
+        ser = serial.Serial(
+            config.get('port', '/dev/ttyUSB0'),
+            config.get('baudrate', 115200),
+            timeout=.01)
     except serial.serialutil.SerialException as e:
         curses.endwin()
         print(e)

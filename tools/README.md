@@ -29,8 +29,8 @@ Color plate can be extended to 256 colors. In order to check each color number r
 ## Custom config:
 Config can contain general, head and logs parameters.\
 General:
- - `port`: mandatory. Example `/dev/ttyUSB0`
- - `baudrate`: mandatory. Example `115200`
+ - `port`: optional. Default `/dev/ttyUSB0`
+ - `baudrate`: optional. Default `115200`
  - `show_prefix`: optional. Default `true`
  - `navigation_colors`: optional. See colors structure
 
