@@ -65,6 +65,12 @@ Frame (frame around window):
  - `colors`: optional
  - `window`: mandatory. Window inside frame
 
+Label (static text):
+ - `size`: mandatory
+ - `colors`: optional
+ - `text`: optional. Default empty
+ - `wrap_around`: optional. Move to new line if text is to long. Default `false`
+
 Status (status of specific log):
  - `size`: mandatory
  - `prefix`: optional. Example `INF: `. Default empty

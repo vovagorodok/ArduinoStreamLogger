@@ -158,6 +158,40 @@ class Col(Window):
             row += window.size.rows
 
 
+class Label(Window):
+    def __init__(self,
+                 stdscr,
+                 size: Size,
+                 colors: int,
+                 text: str,
+                 wrap_around: bool):
+        super().__init__(stdscr, size)
+        self.colors = colors
+        self.text = text
+        self.wrap_around = wrap_around
+        self._format_text()
+
+    def refresh(self, pos: Pos, visible: bool):
+        super().refresh(pos, visible)
+        self._redraw()
+
+    def _format_text(self):
+        col = 0
+        formated_text = ''
+        for ch in self.text:
+            if self.wrap_around and col >= self.size.cols:
+                col = 0
+                formated_text += '\n'
+            formated_text += ch
+            col += 1
+        self.text = formated_text
+
+    def _redraw(self):
+        if self.visible:
+            self.clear(self.colors)
+            self.addstr(self.text, 0, 0, self.colors)
+
+
 class Status(Window):
     def __init__(self,
                  stdscr,
@@ -591,6 +625,8 @@ class LogsMonitor():
             return self._create_row(config['row'])
         if 'col' in config:
             return self._create_col(config['col'])
+        if 'label' in config:
+            return self._create_label(config['label'])
         if 'status' in config:
             return self._create_status(config['status'])
         return None
@@ -615,6 +651,13 @@ class LogsMonitor():
 
     def _create_col(self, config):
         return Col(self.stdscr, self._create_windows(config))
+
+    def _create_label(self, config):
+        return Label(self.stdscr,
+                     self._create_size(config['size']),
+                     self._create_colors(config.get('colors', {})),
+                     config.get('text', ""),
+                     config.get('wrap_around', False))
 
     def _create_status(self, config):
         status = Status(self.stdscr,
