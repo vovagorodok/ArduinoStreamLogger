@@ -467,24 +467,19 @@ class Navigation(Window):
         self.search = ''
         self.filtering = False
         self.filter = ''
-        self.stop_button = NavigationButton(
-            stdscr, Size(1, 13), 'Enter', 'Stop'.ljust(10), colors)
-        self.resume_button = NavigationButton(
-            stdscr, Size(1, 11), 'Esc', 'Resume'.ljust(10), colors)
+        self.stop_button = self._create_button('Enter', 'Stop'.ljust(7))
+        self.stop_button = self._create_button('Esc', 'Resume'.ljust(7))
         self.edit_buttons = [
-            NavigationButton(stdscr, Size(1, 13), 'Enter',
-                             'Apply'.ljust(10), colors),
-            NavigationButton(stdscr, Size(1, 11), 'Esc',
-                             'Cancel'.ljust(10), colors)
-        ]
+            self._create_button('Enter', 'Apply'.ljust(7)),
+            self._create_button('Esc', 'Resume'.ljust(7))]
         self.main_buttons = [
-            NavigationButton(stdscr, Size(1, 10), 'F3',
-                             'Search'.ljust(10), colors),
-            NavigationButton(stdscr, Size(1, 10), 'F4',
-                             'Filter'.ljust(10), colors),
-            NavigationButton(stdscr, Size(1, 10), 'F10',
-                             'Quit'.ljust(10), colors)
-        ]
+            self._create_button('F3', 'Search'.ljust(7)),
+            self._create_button('F4', 'Filter'.ljust(7)),
+            self._create_button('F10', 'Quit'.ljust(7))]
+
+    def _create_button(self, key: str, text: str):
+        rows = len(key) + len(text)
+        return NavigationButton(self.stdscr, Size(1, rows), key, text, self.colors)
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
