@@ -4,12 +4,9 @@ logs:
   - prefix: 'DBG: '
     show: true
     colors:
-      foreground: 8
+      foreground: grey
   - prefix: 'INF: '
     show: true
-    colors:
-      foreground: -1
-      background: -1
   - prefix: 'WRN: '
     show: true
     colors:
