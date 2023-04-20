@@ -1,7 +1,6 @@
 #pragma once
 #include "LogLevel.h"
 #include "LogEntry.h"
-#include "LogInit.h"
 
 #define LOG_TRACE   LOG<LogLevel::trace>()
 #define LOG_DEBUG   LOG<LogLevel::debug>()
