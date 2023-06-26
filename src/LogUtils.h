@@ -8,7 +8,7 @@
 #include <mutex>
 #define LOGGER_WITH_MUTEX
 
-extern std::mutex loggerMutex;
+extern std::recursive_mutex loggerMutex;
 #endif
 
 #ifndef LOG_FORMAT_SEPARATOR
