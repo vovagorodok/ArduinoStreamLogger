@@ -1,0 +1,30 @@
+{
+    "name": "ArduinoStreamLogger",
+    "version": "1.0.2",
+    "description": "Simple ostream logger",
+    "keywords": "logger, logging, log, ostream, stream",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/vovagorodok/ArduinoStreamLogger"
+    },
+    "authors":
+    [
+      {
+        "name": "vovagorodok",
+        "email": "vovagorodok2@gmail.com",
+        "url": "https://github.com/vovagorodok",
+        "maintainer": true
+      },
+      {
+        "name": "dkwach",
+        "email": "dawid.kwach@gmail.com",
+        "url": "https://github.com/dkwach"
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/vovagorodok/ArduinoStreamLogger",
+    "headers": ["Logger.h"],
+    "frameworks": "arduino",
+    "platforms": ["*"]
+  }
