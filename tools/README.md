@@ -6,7 +6,11 @@ Just run:
 ```
 or
 ```
-python3 serial_monitor.py --config=<path to config yaml>
+python3 tools/serial_monitor.py
+```
+or
+```
+python3 tools/serial_monitor.py --config=<path to config yaml> --logs_dir=<path to logs dir>
 ```
 You can easely run from your project. Add to your `tools` content of `tools\examples` and modify it.
 

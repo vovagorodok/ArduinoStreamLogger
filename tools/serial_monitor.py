@@ -758,14 +758,18 @@ def exit_with_error(error):
 
 
 def main(stdscr):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    default_config_path = os.path.join(script_dir, "config.yaml")
+    default_logs_dir = os.path.join(script_dir, "logs")
+
     parser = argparse.ArgumentParser(
         description=textwrap.dedent("""
         Tool for logs monitoring, filtering and collecting.
         """),
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--config", default="config.yaml",
+    parser.add_argument("--config", default=default_config_path,
                         help="Config in yaml format")
-    parser.add_argument("--logs_dir", default="logs",
+    parser.add_argument("--logs_dir", default=default_logs_dir,
                         help="Dir for logs collecting")
     args = parser.parse_args()
 
