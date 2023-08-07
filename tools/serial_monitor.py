@@ -760,8 +760,9 @@ def exit_with_error(error):
 
 def find_first_com_port():
     ports = serial.tools.list_ports.comports()
-    port, desc, hwid = ports[0]
-    return port
+    if len(ports):
+        port, desc, hwid = ports[0]
+        return port
 
 
 def main(stdscr):
