@@ -3,8 +3,9 @@ import argparse
 import textwrap
 import yaml
 import curses
-import serial
 import os
+import serial
+import serial.tools.list_ports
 from enum import Enum
 from datetime import datetime
 from dataclasses import dataclass
@@ -757,6 +758,12 @@ def exit_with_error(error):
     exit()
 
 
+def find_first_com_port():
+    ports = serial.tools.list_ports.comports()
+    port, desc, hwid = ports[0]
+    return port
+
+
 def main(stdscr):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     default_config_path = os.path.join(script_dir, "config.yaml")
@@ -780,7 +787,7 @@ def main(stdscr):
 
     try:
         ser = serial.Serial(
-            config.get('port', '/dev/ttyUSB0'),
+            config.get('port', find_first_com_port()),
             config.get('baudrate', 115200),
             timeout=.01)
     except serial.serialutil.SerialException as e:
