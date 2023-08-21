@@ -55,7 +55,7 @@ Size:
 
 Log Entry:
  - `prefix`: optional. Example `INF: `. Default empty
- - `show`: optional. Show and store log. Default `0`
+ - `show`: optional. Show and store log. Default `false`
  - `colors`: optional
 
 ## Window structures:
