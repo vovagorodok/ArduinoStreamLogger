@@ -31,7 +31,7 @@ LOG_DEBUG << foo();
 Compiler optimize only logging, but `foo()` will be called.\
 Following macro will help to optimize all:
 ```
-LOG_CALL_IF_DEBUG(LOG_DEBUG << foo());
+LOG_CALL_DEBUG(<< foo());
 ```
 
 ## Additional format options
