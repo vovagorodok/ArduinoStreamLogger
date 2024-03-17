@@ -3,7 +3,7 @@ Library opens posibility of logging by using ostream.\
 When log level is disabled (by adding `-D LOG_LEVEL_DISABLED` or removing `-D LOG_LEVEL_..`) then all strings, operators calls, etc. will be optimized/removed from binary.
 
 ## Using
-Library require c++17 or newer.
+Library require c++17 or newer.\
 For PlatformIO. Add to `platformio.ini`:
 ```
 build_flags =
