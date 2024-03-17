@@ -3,23 +3,7 @@ Library opens posibility of logging by using ostream.\
 When log level is disabled (by adding `-D LOG_LEVEL_DISABLED` or removing `-D LOG_LEVEL_..`) then all strings, operators calls, etc. will be optimized/removed from binary.
 
 ## Using
-Library require c++17 or newer.\
-For PlatformIO. Add to `platformio.ini`:
-```
-build_flags =
-	-std=c++17
-	-std=gnu++17
-	-D LOG_LEVEL_INFO
-build_unflags =
-	-std=gnu++11
-```
-
-For Arduino IDE. At boards package installation folder create `platform.local.txt`:
-```
-compiler.cpp.extra_flags=-std=c++17 -D LOG_LEVEL_INFO
-```
-
-Then use as follows:
+Use as follows:
 ```
 #include <Logger.h>
 ...
@@ -53,3 +37,20 @@ build_flags =
 	-D LOG_FORMAT_SEPARATOR='"\\\\"'
 ```
 Default separator is `": "`.
+
+## Configuration
+Library require c++17 or newer.\
+For PlatformIO. Add to `platformio.ini`:
+```
+build_flags =
+	-std=c++17
+	-std=gnu++17
+	-D LOG_LEVEL_INFO
+build_unflags =
+	-std=gnu++11
+```
+
+For Arduino IDE. At boards package installation folder create `platform.local.txt`:
+```
+compiler.cpp.extra_flags=-std=c++17 -D LOG_LEVEL_INFO
+```
