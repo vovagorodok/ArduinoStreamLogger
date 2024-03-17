@@ -14,7 +14,7 @@ build_unflags =
 	-std=gnu++11
 ```
 
-For Arduino IDE. At boards package installation folder create platform.local.txt:
+For Arduino IDE. At boards package installation folder create `platform.local.txt`:
 ```
 compiler.cpp.extra_flags=-std=c++17 -D LOG_LEVEL_INFO
 ```
