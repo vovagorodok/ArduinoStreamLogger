@@ -1,6 +1,6 @@
 {
     "name": "ArduinoStreamLogger",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "description": "Simple ostream logger",
     "keywords": "logger, logging, log, ostream, stream",
     "repository":
