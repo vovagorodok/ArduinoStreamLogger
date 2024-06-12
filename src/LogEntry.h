@@ -11,12 +11,6 @@ struct LogEntry {
         #ifdef LOGGER_WITH_MUTEX
         loggerMutex.lock();
         #endif
-
-        #ifndef LOG_LEVEL_DISABLED
-        #ifndef LOG_FORMAT_WITHOUT_PREFIX
-        logPrefix<level>();
-        #endif
-        #endif
     }
 
     ~LogEntry() {
@@ -42,11 +36,39 @@ struct LogEntry {
 };
 
 template <LogLevel level>
+struct LogEntryWithPrefix : LogEntry<level> {
+    LogEntryWithPrefix(const LogEntryWithPrefix&) = delete;
+    LogEntryWithPrefix(): LogEntry<level>() {
+        #ifndef LOG_LEVEL_DISABLED
+        #ifndef LOG_FORMAT_WITHOUT_PREFIX
+        logPrefix<level>();
+        #endif
+        #endif
+    }
+};
+
+template <LogLevel level>
 struct LogEntryWithEndl : LogEntry<level> {
     LogEntryWithEndl(const LogEntryWithEndl&) = delete;
-    LogEntryWithEndl(): LogEntry<level>() {}
-
     ~LogEntryWithEndl() {
+        #ifndef LOG_LEVEL_DISABLED
+        std::cout << std::endl;
+        #endif
+    }
+};
+
+template <LogLevel level>
+struct LogEntryWithPrefixAndEndl : LogEntry<level> {
+    LogEntryWithPrefixAndEndl(const LogEntryWithPrefixAndEndl&) = delete;
+    LogEntryWithPrefixAndEndl(): LogEntry<level>() {
+        #ifndef LOG_LEVEL_DISABLED
+        #ifndef LOG_FORMAT_WITHOUT_PREFIX
+        logPrefix<level>();
+        #endif
+        #endif
+    }
+
+    ~LogEntryWithPrefixAndEndl() {
         #ifndef LOG_LEVEL_DISABLED
         std::cout << std::endl;
         #endif
