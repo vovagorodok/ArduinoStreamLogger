@@ -50,6 +50,7 @@ struct LogEntryWithPrefix : LogEntry<level> {
 template <LogLevel level>
 struct LogEntryWithEndl : LogEntry<level> {
     LogEntryWithEndl(const LogEntryWithEndl&) = delete;
+    LogEntryWithEndl(): LogEntry<level>() {}
     ~LogEntryWithEndl() {
         #ifndef LOG_LEVEL_DISABLED
         std::cout << std::endl;
