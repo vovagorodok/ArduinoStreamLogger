@@ -1,5 +1,5 @@
 # Serial monitor
-Console application to display and store logs.\
+Console application to display and store logs.  
 Just run:
 ```
 ./tools/serial_monitor.sh
@@ -12,11 +12,11 @@ or
 ```
 python3 tools/serial_monitor.py --config=<path to config yaml> --logs_dir=<path to logs dir>
 ```
-You can easely run from your project. Add to your `tools` content of `tools\examples` and modify it.
+You can easely run from your project. Add to your `tools` content of `tools/examples` and modify it.
 
 ## Colors
-Each color has integer value.\
-Set `-1` in order to use default color.\
+Each color has integer value.  
+Set `-1` in order to use default color.  
 Predefined colors:
 ```
 black   0
@@ -31,7 +31,7 @@ white   7
 Color plate can be extended to 256 colors. In order to check each color number run `show_colors.py`.
 
 ## Custom config:
-Config can contain general, head and logs parameters.\
+Config can contain general, head and logs parameters.  
 General:
  - `port`: optional. Default first available port
  - `baudrate`: optional. Default `115200`
