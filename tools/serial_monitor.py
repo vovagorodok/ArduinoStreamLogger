@@ -760,9 +760,30 @@ def exit_with_error(error):
 
 def find_first_com_port():
     ports = serial.tools.list_ports.comports()
-    if len(ports):
-        port, desc, hwid = ports[0]
-        return port
+    ports = list(filter(lambda port: port.hwid != 'n/a', ports))
+
+    if not len(ports):
+        exit_with_error("Port not found.")
+
+    if len(ports) == 1:
+        return ports[0].device
+
+    print("Ports:")
+    for index, port in enumerate(ports):
+        print(f"{index}. {port.name}: {port.description} [{port.hwid}]")
+
+    user_input = input("Chose port [0]: ")
+
+    try:
+        device_num = int(user_input)
+        if device_num >= len(ports) or device_num < 0:
+            exit_with_error("Incorrect port number.")
+    except ValueError:
+        device_num = 0
+        if len(user_input):
+            exit_with_error("Incorrect input.")
+
+    return ports[0].device
 
 
 def main(stdscr):
