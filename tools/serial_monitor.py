@@ -783,7 +783,7 @@ def find_serial_port():
         if len(user_input):
             exit_with_error("Incorrect input.")
 
-    return ports[0].device
+    return ports[device_num].device
 
 
 def main(stdscr):
