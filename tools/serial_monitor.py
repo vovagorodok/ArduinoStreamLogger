@@ -758,11 +758,32 @@ def exit_with_error(error):
     exit()
 
 
-def find_first_com_port():
+def find_serial_port():
     ports = serial.tools.list_ports.comports()
-    if len(ports):
-        port, desc, hwid = ports[0]
-        return port
+    ports = list(filter(lambda port: port.hwid != 'n/a', ports))
+
+    if not len(ports):
+        exit_with_error("Port not found.")
+
+    if len(ports) == 1:
+        return ports[0].device
+
+    print("Ports:")
+    for index, port in enumerate(ports):
+        print(f"{index}. {port.name}: {port.description} [{port.hwid}]")
+
+    user_input = input("Chose port [0]: ")
+
+    try:
+        device_num = int(user_input)
+        if device_num >= len(ports) or device_num < 0:
+            exit_with_error("Incorrect port number.")
+    except ValueError:
+        device_num = 0
+        if len(user_input):
+            exit_with_error("Incorrect input.")
+
+    return ports[device_num].device
 
 
 def main(stdscr):
@@ -787,8 +808,11 @@ def main(stdscr):
         exit_with_error(e)
 
     try:
+        port = config.get('port', None)
+        if port is None:
+            port = find_serial_port()
         ser = serial.Serial(
-            config.get('port', find_first_com_port()),
+            port,
             config.get('baudrate', 115200),
             timeout=.01)
     except serial.serialutil.SerialException as e:
