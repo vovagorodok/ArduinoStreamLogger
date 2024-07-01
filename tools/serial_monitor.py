@@ -758,7 +758,7 @@ def exit_with_error(error):
     exit()
 
 
-def find_first_com_port():
+def find_serial_port():
     ports = serial.tools.list_ports.comports()
     ports = list(filter(lambda port: port.hwid != 'n/a', ports))
 
@@ -808,8 +808,11 @@ def main(stdscr):
         exit_with_error(e)
 
     try:
+        port = config.get('port', None)
+        if port is None:
+            port = find_serial_port()
         ser = serial.Serial(
-            config.get('port', find_first_com_port()),
+            port,
             config.get('baudrate', 115200),
             timeout=.01)
     except serial.serialutil.SerialException as e:
