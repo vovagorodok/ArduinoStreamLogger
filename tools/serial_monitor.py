@@ -210,6 +210,7 @@ class Status(Window):
         self.log = initial
         self.wrap_around = wrap_around
         self.insert_spaces = insert_spaces
+        self._old_log = initial
 
     def refresh(self, pos: Pos, visible: bool):
         super().refresh(pos, visible)
@@ -219,7 +220,9 @@ class Status(Window):
         if log.startswith(self.prefix):
             self.log = log if self.show_prefix else log[len(self.prefix):]
             self._format_log()
-            self._redraw()
+            if self._old_log != self.log:
+                self._old_log = self.log
+                self._redraw()
 
     def _format_log(self):
         col = 0
