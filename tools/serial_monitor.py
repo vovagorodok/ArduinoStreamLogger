@@ -529,7 +529,7 @@ class Navigation(Window):
             self.searching = False
             self._redraw()
         elif ch == curses.KEY_F10:
-            exit()
+            exit_stdscr(self.stdscr)
 
         if self.filtering:
             if ch == curses.KEY_BACKSPACE:
@@ -547,7 +547,7 @@ class Navigation(Window):
                 self._redraw()
         else:
             if ch == ord('q'):
-                exit()
+                exit_stdscr(self.stdscr)
 
     def _redraw(self):
         col = self._draw_panel()
@@ -755,10 +755,37 @@ class LogsMonitor():
             self.nav.pull(ch)
 
 
-def exit_with_error(error):
+def start_stdscr():
+    stdscr = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(1)
+    curses.start_color()
+    curses.use_default_colors()
+    stdscr.nodelay(True)
+    return stdscr
+
+
+def stop_stdscr(stdscr):
+    stdscr.keypad(1)
+    curses.echo()
+    curses.nocbreak()
     curses.endwin()
-    print(f"\n{error}")
+
+
+def exit_with_error(error):
+    print(error)
     exit()
+
+
+def exit_stdscr(stdscr):
+    stop_stdscr(stdscr)
+    exit()
+
+
+def exit_stdscr_with_error(stdscr, error):
+    stop_stdscr(stdscr)
+    exit_with_error(error)
 
 
 def find_serial_port():
@@ -773,7 +800,7 @@ def find_serial_port():
 
     print("Ports:")
     for index, port in enumerate(ports):
-        print(f"{index}. {port.name}: {port.description} [{port.hwid}]")
+        print(f"{index}. {port.name}: {port.description}")
 
     user_input = input("Chose port [0]: ")
 
@@ -789,7 +816,7 @@ def find_serial_port():
     return ports[device_num].device
 
 
-def main(stdscr):
+def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     default_config_path = os.path.join(script_dir, "config.yaml")
     default_logs_dir = os.path.join(script_dir, "logs")
@@ -820,10 +847,10 @@ def main(stdscr):
             timeout=.01)
     except serial.serialutil.SerialException as e:
         exit_with_error(e)
+    except KeyboardInterrupt:
+        exit()
 
-    curses.start_color()
-    curses.use_default_colors()
-    stdscr.nodelay(True)
+    stdscr = start_stdscr()
     logs_monitor = LogsMonitor(stdscr, config, args.logs_dir)
 
     try:
@@ -835,15 +862,16 @@ def main(stdscr):
             except UnicodeDecodeError:
                 continue
             except serial.serialutil.SerialException as e:
-                exit_with_error(e)
+                exit_stdscr_with_error(stdscr, e)
 
             if len(log):
                 logs_monitor.on_log(log)
 
     except KeyboardInterrupt:
-        exit()
+        exit_stdscr(stdscr)
     except ValueError as e:
-        exit_with_error(e)
+        exit_stdscr_with_error(stdscr, e)
 
 
-curses.wrapper(main)
+if __name__ == "__main__":
+    main()
