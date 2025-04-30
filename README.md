@@ -40,7 +40,7 @@ Default separator is `": "`.
 
 ## Configuration
 Library require c++17 or newer.  
-For PlatformIO. Add to `platformio.ini`:
+For PlatformIO. Add `LOG_LEVEL_INFO` or `LOG_LVL_INFO` to `platformio.ini`:
 ```
 build_flags =
 	-std=c++17
