@@ -35,5 +35,6 @@ enum class LogLevel {
 #define LOG_LEVEL LogLevel::disabled
 #elif !defined LOG_LEVEL
 #define LOG_LEVEL_DISABLED
+#define LOG_LVL_DISABLED
 #define LOG_LEVEL LogLevel::disabled
 #endif
