@@ -20,6 +20,7 @@ enum class LogLevel {
 #elif defined LOG_LEVEL_ERROR
 #define LOG_LEVEL LogLevel::error
 #elif defined LOG_LEVEL_DISABLED
+#define LOG_LVL_DISABLED
 #define LOG_LEVEL LogLevel::disabled
 #elif defined LOG_LVL_TRACE
 #define LOG_LEVEL LogLevel::trace
@@ -32,6 +33,7 @@ enum class LogLevel {
 #elif defined LOG_LVL_ERROR
 #define LOG_LEVEL LogLevel::error
 #elif defined LOG_LVL_DISABLED
+#define LOG_LEVEL_DISABLED
 #define LOG_LEVEL LogLevel::disabled
 #elif !defined LOG_LEVEL
 #define LOG_LEVEL_DISABLED
