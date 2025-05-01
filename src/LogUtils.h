@@ -1,7 +1,7 @@
 #pragma once
 #include "LogLevel.h"
 
-#ifndef LOG_LEVEL_DISABLED
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
 #include <iostream>
 
 #ifdef ESP32
