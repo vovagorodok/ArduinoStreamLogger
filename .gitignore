@@ -1,4 +1,5 @@
 .pio
 .vscode
+*.ino.cpp
 logs
 tools/logs

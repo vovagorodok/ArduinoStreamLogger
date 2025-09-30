@@ -4,7 +4,7 @@
 #ifndef LOG_LEVEL_DISABLED
 #include <iostream>
 
-#ifdef ESP32
+#ifdef ARDUINO_ARCH_ESP32
 #include <mutex>
 #define LOGGER_WITH_MUTEX
 

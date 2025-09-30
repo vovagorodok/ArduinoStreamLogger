@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Logger.h>
 
-#if !defined(LOG_LEVEL_DISABLED) && !defined(ESP8266) && !defined(ESP32)
+#if !defined(LOG_LEVEL_DISABLED) && !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
 #define LOG_INIT_STREAM
 #endif
 
