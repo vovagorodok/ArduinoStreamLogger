@@ -1,7 +1,7 @@
 #pragma once
 #include "LogLevel.h"
 #include "LogUtils.h"
-#include <Arduino.h>
+#include "LogArduino.h"
 
 template <LogLevel level>
 struct LogEntry {
@@ -27,12 +27,14 @@ struct LogEntry {
         return *this;
     }
 
+    #ifdef LOG_ARDUINO
     inline LogEntry& operator<<(const String& value) {
         #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
         std::cout << value.c_str();
         #endif
         return *this;
     }
+    #endif
 };
 
 template <LogLevel level>
