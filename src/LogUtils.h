@@ -1,10 +1,10 @@
 #pragma once
 #include "LogLevel.h"
 
-#ifndef LOG_LEVEL_DISABLED
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
 #include <iostream>
 
-#ifdef ARDUINO_ARCH_ESP32
+#ifdef ESP32
 #include <mutex>
 #define LOGGER_WITH_MUTEX
 

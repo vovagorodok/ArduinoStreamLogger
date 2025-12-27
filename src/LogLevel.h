@@ -9,31 +9,23 @@ enum class LogLevel {
     disabled
 };
 
-#if defined LOG_LEVEL_TRACE
+#if defined(LOG_LEVEL_TRACE) || defined(LOG_LVL_TRACE)
 #define LOG_LEVEL LogLevel::trace
-#elif defined LOG_LEVEL_DEBUG
+#elif defined(LOG_LEVEL_DEBUG) || defined(LOG_LVL_DEBUG)
 #define LOG_LEVEL LogLevel::debug
-#elif defined LOG_LEVEL_INFO
+#elif defined(LOG_LEVEL_INFO) || defined(LOG_LVL_INFO)
 #define LOG_LEVEL LogLevel::info
-#elif defined LOG_LEVEL_WARNING
+#elif defined(LOG_LEVEL_WARNING) || defined(LOG_LVL_WARNING)
 #define LOG_LEVEL LogLevel::warning
-#elif defined LOG_LEVEL_ERROR
+#elif defined(LOG_LEVEL_ERROR) || defined(LOG_LVL_ERROR)
 #define LOG_LEVEL LogLevel::error
-#elif defined LOG_LEVEL_DISABLED
+#elif defined(LOG_LEVEL_DISABLED)
+#define LOG_LVL_DISABLED
 #define LOG_LEVEL LogLevel::disabled
-#elif defined LOG_LVL_TRACE
-#define LOG_LEVEL LogLevel::trace
-#elif defined LOG_LVL_DEBUG
-#define LOG_LEVEL LogLevel::debug
-#elif defined LOG_LVL_INFO
-#define LOG_LEVEL LogLevel::info
-#elif defined LOG_LVL_WARNING
-#define LOG_LEVEL LogLevel::warning
-#elif defined LOG_LVL_ERROR
-#define LOG_LEVEL LogLevel::error
-#elif defined LOG_LVL_DISABLED
+#elif defined(LOG_LVL_DISABLED)
+#define LOG_LEVEL_DISABLED
 #define LOG_LEVEL LogLevel::disabled
-#elif !defined LOG_LEVEL
+#elif !defined(LOG_LEVEL)
 #define LOG_LEVEL_DISABLED
 #define LOG_LVL_DISABLED
 #define LOG_LEVEL LogLevel::disabled
