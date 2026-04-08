@@ -1,19 +1,9 @@
 #pragma once
 #include "LogLevel.h"
+#include "LogFormat.h"
 
-#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+#if !defined(LOG_LEVEL_DISABLED)
 #include <iostream>
-
-#ifdef ESP32
-#include <mutex>
-#define LOGGER_WITH_MUTEX
-
-extern std::recursive_mutex loggerMutex;
-#endif
-
-#ifndef LOG_FORMAT_SEPARATOR
-#define LOG_FORMAT_SEPARATOR ": "
-#endif
 
 template <LogLevel level>
 constexpr void logPrefix() {
