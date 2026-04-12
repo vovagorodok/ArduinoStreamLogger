@@ -1,7 +1,7 @@
 #pragma once
 #include "LogLevel.h"
 
-#if !defined(LOG_LEVEL_DISABLED)
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <mutex>
