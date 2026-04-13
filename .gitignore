@@ -1,5 +1,8 @@
 .pio
 .vscode
+.DS_Store
 *.ino.cpp
+*.pyc
+__pycache__
 logs
 tools/logs
