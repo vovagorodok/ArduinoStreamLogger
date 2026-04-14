@@ -6,6 +6,7 @@ import os
 import asyncio
 
 from bleak import BleakClient, BleakScanner
+from bleak.exc import BleakError
 
 from monitor import uuids
 from monitor.utils import is_linux, is_fedora
@@ -107,6 +108,10 @@ async def main():
         client, tx_char, rx_char = await connect(device)
     except KeyboardInterrupt:
         exit()
+    except asyncio.CancelledError:
+        exit()
+    except BleakError as e:
+        exit_with_error(e)
 
     stdscr = start_stdscr()
     logs_monitor = LogsMonitor(stdscr, config, args.logs_dir)
@@ -122,7 +127,7 @@ async def main():
             logs_monitor.pull()
 
             try:
-                log = str(await queue.get(), 'utf-8')
+                log = str(await queue.get(), 'utf-8').strip('\r\n\0')
             except UnicodeDecodeError:
                 continue
 
@@ -130,6 +135,9 @@ async def main():
                 logs_monitor.on_log(log)
 
     except KeyboardInterrupt:
+        await client.disconnect()
+        exit_stdscr(stdscr)
+    except asyncio.CancelledError:
         await client.disconnect()
         exit_stdscr(stdscr)
     except ValueError as e:
