@@ -106,9 +106,7 @@ async def main():
     try:
         device = await find_ble_device(args.service_uuid)
         client, tx_char, rx_char = await connect(device)
-    except KeyboardInterrupt:
-        exit()
-    except asyncio.CancelledError:
+    except KeyboardInterrupt, asyncio.CancelledError:
         exit()
     except BleakError as e:
         exit_with_error(e)
@@ -117,9 +115,12 @@ async def main():
     logs_monitor = LogsMonitor(stdscr, config, args.logs_dir)
 
     # issue: https://github.com/hbldh/bleak/issues/1501
-    queue = asyncio.Queue(1)
+    queue = asyncio.Queue(100)
     async def callback(char, array):
-        await queue.put(array)
+        try:
+            queue.put_nowait(array)
+        except asyncio.QueueFull:
+            exit_stdscr_with_error(stdscr, "Queue is full.")
     await client.start_notify(rx_char, callback)
 
     try:
@@ -127,21 +128,20 @@ async def main():
             logs_monitor.pull()
 
             try:
-                log = str(await queue.get(), 'utf-8').strip('\r\n\0')
+                log = str(queue.get_nowait(), 'utf-8').strip('\r\n\0')
+            except asyncio.QueueEmpty:
+                log = str()
             except UnicodeDecodeError:
                 continue
 
             if len(log):
                 logs_monitor.on_log(log)
+            else:
+                await asyncio.sleep(0.01)
 
-    except KeyboardInterrupt:
-        await client.disconnect()
-        exit_stdscr(stdscr)
-    except asyncio.CancelledError:
-        await client.disconnect()
+    except KeyboardInterrupt, asyncio.CancelledError:
         exit_stdscr(stdscr)
     except ValueError as e:
-        await client.disconnect()
         exit_stdscr_with_error(stdscr, e)
 
 
