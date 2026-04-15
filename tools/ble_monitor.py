@@ -106,7 +106,7 @@ async def main():
     try:
         device = await find_ble_device(args.service_uuid)
         client, tx_char, rx_char = await connect(device)
-    except KeyboardInterrupt, asyncio.CancelledError:
+    except (KeyboardInterrupt, asyncio.CancelledError):
         exit()
     except BleakError as e:
         exit_with_error(e)
@@ -139,7 +139,7 @@ async def main():
             else:
                 await asyncio.sleep(0.01)
 
-    except KeyboardInterrupt, asyncio.CancelledError:
+    except (KeyboardInterrupt, asyncio.CancelledError):
         exit_stdscr(stdscr)
     except ValueError as e:
         exit_stdscr_with_error(stdscr, e)
