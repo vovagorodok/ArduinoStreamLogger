@@ -3,20 +3,20 @@
 #include "LogFormat.h"
 
 #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
-#include <iostream>
+#include <ostream>
 
 template <LogLevel level>
-constexpr void logPrefix() {
+constexpr void logPrefix(std::ostream& os) {
     if constexpr (level == LogLevel::trace)
-        std::cout << "TRC" << LOG_FORMAT_SEPARATOR;
+        os << "TRC" << LOG_FORMAT_SEPARATOR;
     if constexpr (level == LogLevel::debug)
-        std::cout << "DBG" << LOG_FORMAT_SEPARATOR;
+        os << "DBG" << LOG_FORMAT_SEPARATOR;
     if constexpr (level == LogLevel::info)
-        std::cout << "INF" << LOG_FORMAT_SEPARATOR;
+        os << "INF" << LOG_FORMAT_SEPARATOR;
     if constexpr (level == LogLevel::warning)
-        std::cout << "WRN" << LOG_FORMAT_SEPARATOR;
+        os << "WRN" << LOG_FORMAT_SEPARATOR;
     if constexpr (level == LogLevel::error)
-        std::cout << "ERR" << LOG_FORMAT_SEPARATOR;
+        os << "ERR" << LOG_FORMAT_SEPARATOR;
 }
 
 #endif

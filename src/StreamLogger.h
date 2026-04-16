@@ -55,7 +55,7 @@ constexpr bool isLogged(LogLevel level) {
 }
 
 template <LogLevel level>
-constexpr __attribute__((always_inline)) inline auto LOG() {
+constexpr __attribute__((always_inline)) auto LOG() {
     if constexpr (isLogged(level)) {
         return LogEntryWithPrefixAndEndl<level>();
     } else {
@@ -64,7 +64,7 @@ constexpr __attribute__((always_inline)) inline auto LOG() {
 };
 
 template <LogLevel level>
-constexpr __attribute__((always_inline)) inline auto LOG_BEGIN() {
+constexpr __attribute__((always_inline)) auto LOG_BEGIN() {
     if constexpr (isLogged(level)) {
         return LogEntryWithPrefix<level>();
     } else {
@@ -73,7 +73,7 @@ constexpr __attribute__((always_inline)) inline auto LOG_BEGIN() {
 };
 
 template <LogLevel level>
-constexpr __attribute__((always_inline)) inline auto LOG_ADD() {
+constexpr __attribute__((always_inline)) auto LOG_ADD() {
     if constexpr (isLogged(level)) {
         return LogEntry<level>();
     } else {
@@ -82,10 +82,42 @@ constexpr __attribute__((always_inline)) inline auto LOG_ADD() {
 };
 
 template <LogLevel level>
-constexpr __attribute__((always_inline)) inline auto LOG_END() {
+constexpr __attribute__((always_inline)) auto LOG_END() {
     if constexpr (isLogged(level)) {
         return LogEntryWithEndl<level>();
     } else {
         return NoLogEntry();
     }
 };
+
+#define LOG_CACHE(level) [](){ static std::string last{}; return LogEntryWithCache<level>(last); }()
+
+#ifdef LOG_ENABLE_TRACE
+    #define LOG_CACHE_TRACE LOG_CACHE(LogLevel::trace)
+#else
+    #define LOG_CACHE_TRACE NoLogEntry()
+#endif
+
+#ifdef LOG_ENABLE_DEBUG
+    #define LOG_CACHE_DEBUG LOG_CACHE(LogLevel::debug)
+#else
+    #define LOG_CACHE_DEBUG NoLogEntry()
+#endif
+
+#ifdef LOG_ENABLE_INFO
+    #define LOG_CACHE_INFO LOG_CACHE(LogLevel::info)
+#else
+    #define LOG_CACHE_INFO NoLogEntry()
+#endif
+
+#ifdef LOG_ENABLE_WARNING
+    #define LOG_CACHE_WARNING LOG_CACHE(LogLevel::warning)
+#else
+    #define LOG_CACHE_WARNING NoLogEntry()
+#endif
+
+#ifdef LOG_ENABLE_ERROR
+    #define LOG_CACHE_ERROR LOG_CACHE(LogLevel::error)
+#else
+    #define LOG_CACHE_ERROR NoLogEntry()
+#endif

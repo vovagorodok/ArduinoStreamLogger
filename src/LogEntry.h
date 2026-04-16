@@ -3,6 +3,10 @@
 #include "LogMutex.h"
 #include "LogPrefix.h"
 #include "LogArduino.h"
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+#include <iostream>
+#include <sstream>
+#endif
 
 template <LogLevel level>
 struct LogEntry {
@@ -19,64 +23,110 @@ struct LogEntry {
         loggerMutex.unlock();
         #endif
     }
+};
+
+template <LogLevel level>
+struct LogEntryWithStream : LogEntry<level> {
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
 
     template <class T>
-    inline LogEntry& operator<<(const T& value) {
-        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+    inline LogEntryWithStream& operator<<(const T& value) {
         std::cout << value;
-        #endif
         return *this;
     }
 
     #ifdef LOG_ARDUINO
-    inline LogEntry& operator<<(const String& value) {
-        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+    inline LogEntryWithStream& operator<<(const String& value) {
         std::cout << value.c_str();
-        #endif
         return *this;
     }
     #endif
+
+#endif
 };
 
 template <LogLevel level>
-struct LogEntryWithPrefix : LogEntry<level> {
+struct LogEntryWithPrefix : LogEntryWithStream<level> {
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+
     LogEntryWithPrefix(const LogEntryWithPrefix&) = delete;
-    LogEntryWithPrefix(): LogEntry<level>() {
-        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+    LogEntryWithPrefix(): LogEntryWithStream<level>() {
         #ifndef LOG_FORMAT_WITHOUT_PREFIX
-        logPrefix<level>();
-        #endif
+        logPrefix<level>(std::cout);
         #endif
     }
+
+#endif
 };
 
 template <LogLevel level>
-struct LogEntryWithEndl : LogEntry<level> {
+struct LogEntryWithEndl : LogEntryWithStream<level> {
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+
     LogEntryWithEndl(const LogEntryWithEndl&) = delete;
-    LogEntryWithEndl(): LogEntry<level>() {}
+    LogEntryWithEndl(): LogEntryWithStream<level>() {}
     ~LogEntryWithEndl() {
-        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
         std::cout << std::endl;
-        #endif
     }
+
+#endif
 };
 
 template <LogLevel level>
-struct LogEntryWithPrefixAndEndl : LogEntry<level> {
+struct LogEntryWithPrefixAndEndl : LogEntryWithStream<level> {
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+
     LogEntryWithPrefixAndEndl(const LogEntryWithPrefixAndEndl&) = delete;
-    LogEntryWithPrefixAndEndl(): LogEntry<level>() {
-        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+    LogEntryWithPrefixAndEndl(): LogEntryWithStream<level>() {
         #ifndef LOG_FORMAT_WITHOUT_PREFIX
-        logPrefix<level>();
-        #endif
+        logPrefix<level>(std::cout);
         #endif
     }
 
     ~LogEntryWithPrefixAndEndl() {
-        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
         std::cout << std::endl;
+    }
+
+#endif
+};
+
+template <LogLevel level>
+struct LogEntryWithCache : LogEntry<level> {
+#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
+
+    LogEntryWithCache(const LogEntryWithCache&) = delete;
+    LogEntryWithCache(std::string& last): LogEntry<level>(), last(last), cache() {
+        #ifndef LOG_FORMAT_WITHOUT_PREFIX
+        logPrefix<level>(cache);
         #endif
     }
+
+    ~LogEntryWithCache() {
+        auto str = cache.str();
+        if (str != last) {
+            std::cout << str << std::endl;
+            last = str;
+        }
+    }
+
+    template <class T>
+    inline LogEntryWithCache& operator<<(const T& value) {
+        cache << value;
+        return *this;
+    }
+
+    #ifdef LOG_ARDUINO
+    inline LogEntryWithCache& operator<<(const String& value) {
+        cache << value.c_str();
+        return *this;
+    }
+    #endif
+
+private:
+    std::string& last;
+    std::ostringstream cache;
+
+#endif
 };
 
 enum class NoLogEntry {};
