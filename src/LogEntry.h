@@ -27,22 +27,22 @@ struct LogEntry {
 
 template <LogLevel level>
 struct LogEntryWithStream : LogEntry<level> {
-#if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
-
     template <class T>
     inline LogEntryWithStream& operator<<(const T& value) {
+        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
         std::cout << value;
+        #endif
         return *this;
     }
 
     #ifdef LOG_ARDUINO
     inline LogEntryWithStream& operator<<(const String& value) {
+        #if !defined(LOG_LEVEL_DISABLED) && !defined(LOG_LVL_DISABLED)
         std::cout << value.c_str();
+        #endif
         return *this;
     }
     #endif
-
-#endif
 };
 
 template <LogLevel level>
