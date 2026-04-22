@@ -75,7 +75,7 @@ constexpr __attribute__((always_inline)) auto LOG_BEGIN() {
 template <LogLevel level>
 constexpr __attribute__((always_inline)) auto LOG_ADD() {
     if constexpr (isLogged(level)) {
-        return LogEntry<level>();
+        return LogEntryWithStream<level>();
     } else {
         return NoLogEntry();
     }
