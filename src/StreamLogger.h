@@ -92,6 +92,7 @@ constexpr __attribute__((always_inline)) auto LOG_END() {
 
 #define LOG_CACHE(level) [](){ static std::string last{}; return LogEntryWithCache<level>(last); }()
 
+// clang-format off: Used IndentPPDirectives with BeforeHash
 #ifdef LOG_ENABLE_TRACE
     #define LOG_CACHE_TRACE LOG_CACHE(LogLevel::trace)
 #else
@@ -121,3 +122,4 @@ constexpr __attribute__((always_inline)) auto LOG_END() {
 #else
     #define LOG_CACHE_ERROR NoLogEntry()
 #endif
+// clang-format on

@@ -9,6 +9,7 @@ enum class LogLevel {
     disabled
 };
 
+// clang-format off: Used IndentPPDirectives with BeforeHash
 #if defined(LOG_LEVEL_TRACE) || defined(LOG_LVL_TRACE)
     #define LOG_LEVEL LogLevel::trace
 #elif defined(LOG_LEVEL_DEBUG) || defined(LOG_LVL_DEBUG)
@@ -52,3 +53,4 @@ enum class LogLevel {
 #elif defined(LOG_LEVEL_ERROR) || defined(LOG_LVL_ERROR)
     #define LOG_ENABLE_ERROR
 #endif
+// clang-format on

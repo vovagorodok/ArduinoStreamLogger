@@ -3,6 +3,7 @@
 #include "LogFormat.h"
 #include "LogArduino.h"
 
+// clang-format off: Used IndentPPDirectives with BeforeHash
 #if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
     #define PRINTF_LOG Serial.printf
 #else
@@ -51,7 +52,7 @@
     #define PRINTF_WARNING(fmt, ...)       PRINTF_LOG("WRN" LOG_FORMAT_SEPARATOR fmt "\n", ##__VA_ARGS__)
     #define PRINTF_BEGIN_WARNING(fmt, ...) PRINTF_LOG("WRN" LOG_FORMAT_SEPARATOR fmt, ##__VA_ARGS__)
     #define PRINTF_ADD_WARNING(fmt, ...)   PRINTF_LOG(fmt, ##__VA_ARGS__)
-    #define PRINTF_END_WARNING(fmt, ...)   PRINTF_LOG(fmt "\n", ##__VA_ARGS__)  
+    #define PRINTF_END_WARNING(fmt, ...)   PRINTF_LOG(fmt "\n", ##__VA_ARGS__)
 #else
     #define PRINTF_WARNING(fmt, ...)       PRINTF_NOOP
     #define PRINTF_BEGIN_WARNING(fmt, ...) PRINTF_NOOP
@@ -70,3 +71,4 @@
     #define PRINTF_ADD_ERROR(fmt, ...)   PRINTF_NOOP
     #define PRINTF_END_ERROR(fmt, ...)   PRINTF_NOOP
 #endif
+// clang-format on
