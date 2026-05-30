@@ -1,5 +1,5 @@
 # Arduino Stream Logger
-Library opens posibility of logging by using ostream.  
+Library opens possibility of logging by using ostream.  
 When log level is disabled (by adding `-D LOG_LEVEL_DISABLED` or removing `-D LOG_LEVEL_..`) then all strings, operators calls, etc. will be optimized/removed from binary.
 
 ## Using

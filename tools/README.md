@@ -12,7 +12,7 @@ or
 ```
 python3 tools/serial_monitor.py --config=<path to config yaml> --logs_dir=<path to logs dir>
 ```
-You can easely run from your project. Add to your `tools` content of `tools/examples` and modify it.
+You can easily run from your project. Add to your `tools` content of `tools/examples` and modify it.
 
 ## Colors
 Each color has integer value.  

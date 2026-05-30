@@ -172,14 +172,14 @@ class Label(Window):
 
     def _format_text(self):
         col = 0
-        formated_text = ''
+        formatted_text = ''
         for ch in self.text:
             if self.wrap_around and col >= self.size.cols:
                 col = 0
-                formated_text += '\n'
-            formated_text += ch
+                formatted_text += '\n'
+            formatted_text += ch
             col += 1
-        self.text = formated_text
+        self.text = formatted_text
 
     def _redraw(self):
         if self.visible:
@@ -220,21 +220,21 @@ class Status(Window):
 
     def _format_log(self):
         col = 0
-        formated_log = ''
+        formatted_log = ''
         for ch in self.log:
             if self.wrap_around and col >= self.size.cols:
                 col = 0
-                formated_log += '\n'
-            formated_log += ch
+                formatted_log += '\n'
+            formatted_log += ch
             col += 1
             if self.insert_spaces:
                 if self.wrap_around and col >= self.size.cols:
                     col = 0
-                    formated_log += '\n'
+                    formatted_log += '\n'
                 else:
-                    formated_log += ' '
+                    formatted_log += ' '
                     col += 1
-        self.log = formated_log
+        self.log = formatted_log
 
     def _redraw(self):
         if self.visible:
